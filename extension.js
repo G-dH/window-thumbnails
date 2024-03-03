@@ -5,34 +5,39 @@
  * @author     GdH <G-dH@github.com>
  * @copyright  2024
  * @license    GPL-3.0
-  */
+ */
 
 'use strict';
 
-import GLib from 'gi://GLib';
+const { GLib } = imports.gi;
 
-import * as Extension from 'resource:///org/gnome/shell/extensions/extension.js';
+const ExtensionUtils = imports.misc.extensionUtils;
+const MyExtension = ExtensionUtils.getCurrentExtension();
+const WinTmbModule = MyExtension.imports.winTmb.WinTmbModule;
+const Settings = MyExtension.imports.settings;
+const Util = MyExtension.imports.util;
+const Keybindings = MyExtension.imports.keybindings;
 
-// Me imports
-import * as Settings from './settings.js';
-import { WinTmbModule } from './winTmb.js';
-import * as Keybindings from './keybindings.js';
-import * as Util from './util.js';
+function init() {
+    ExtensionUtils.initTranslations();
+    return new WTMB();
+}
 
-export default class WTMB extends Extension.Extension {
+class WTMB {
     enable() {
         const Me = {};
 
-        Me.metadata = this.metadata;
-        Me.gSettings = this.getSettings();
-        Me._ = this.gettext.bind(this);
+        this.metadata = MyExtension.metadata;
+        Me.metadata = MyExtension.metadata;
+        Me.gSettings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
         Me.Util = Util;
+        Me.Util.init(Me);
+        Me._ = imports.gettext.domain(Me.metadata['gettext-domain']).gettext;
 
         Me.opt = new Settings.Options(Me);
 
         this.Me = Me;
 
-        Util.init(Me);
         this._wt = new WinTmbModule(Me);
         this._wt.update();
 

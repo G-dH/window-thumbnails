@@ -9,9 +9,9 @@
 
 'use strict';
 
-import GLib from 'gi://GLib';
+const { GLib } = imports.gi;
 
-export const Options = class {
+var Options = class {
     constructor(me) {
         this.Me = me;
 

@@ -10,27 +10,23 @@
 
 'use strict';
 
-import Gio from 'gi://Gio';
-import GLib from 'gi://GLib';
-import Clutter from 'gi://Clutter';
-import Meta from 'gi://Meta';
-import Shell from 'gi://Shell';
+const  { Gio, GLib, Clutter, Meta, Shell } = imports.gi;
 
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+const Main = imports.ui.main;
 
 let Me;
 let _installedExtensions;
 
-export function init(me) {
+function init(me) {
     Me = me;
 }
 
-export function cleanGlobals() {
+function cleanGlobals() {
     Me = null;
     _installedExtensions = null;
 }
 
-export function openPreferences(metadata) {
+function openPreferences(metadata) {
     if (!metadata)
         metadata = Me.metadata;
     const windows = global.display.get_tab_list(Meta.TabList.NORMAL_ALL, null);
@@ -72,25 +68,25 @@ export function openPreferences(metadata) {
     }
 }
 
-export function isShiftPressed(state = null) {
+function isShiftPressed(state = null) {
     if (state === null)
         [,, state] = global.get_pointer();
     return (state & Clutter.ModifierType.SHIFT_MASK) !== 0;
 }
 
-export function isCtrlPressed(state = null) {
+function isCtrlPressed(state = null) {
     if (state === null)
         [,, state] = global.get_pointer();
     return (state & Clutter.ModifierType.CONTROL_MASK) !== 0;
 }
 
-export function isAltPressed(state = null) {
+function isAltPressed(state = null) {
     if (state === null)
         [,, state] = global.get_pointer();
     return (state & Clutter.ModifierType.MOD1_MASK) !== 0;
 }
 
-export function getScrollDirection(event) {
+function getScrollDirection(event) {
     // scroll wheel provides two types of direction information:
     // 1. Clutter.ScrollDirection.DOWN / Clutter.ScrollDirection.UP
     // 2. Clutter.ScrollDirection.SMOOTH + event.get_scroll_delta()
@@ -114,7 +110,7 @@ export function getScrollDirection(event) {
     return direction;
 }
 
-export function getEnabledExtensions(pattern = '') {
+function getEnabledExtensions(pattern = '') {
     let result = [];
     // extensionManager is unreliable at startup because it is uncertain whether all extensions have been loaded
     // also gsettings key can contain already removed extensions (user deleted them without disabling them first)

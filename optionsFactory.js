@@ -9,23 +9,19 @@
 
 'use strict';
 
-import Adw from 'gi://Adw';
-import Gio from 'gi://Gio';
-import GObject from 'gi://GObject';
-import Gtk from 'gi://Gtk';
-import Gdk from 'gi://Gdk';
+const { Adw, GObject, Gtk, Gdk, Gio } = imports.gi;
 
 let Me;
 
 // gettext
 let _;
 
-export function init(me) {
+function init(me) {
     Me = me;
     _ = Me._;
 }
 
-export const ItemFactory = class {
+var ItemFactory = class {
     constructor() {
         this._settings = Me.opt._gSettings;
     }
@@ -235,6 +231,7 @@ export const ItemFactory = class {
             image.margin_start = 60;
             image.margin_end = 60;
             image.can_shrink = false;
+            image.keep_aspect_ratio = true;
 
             const label = new Gtk.Label({
                 label: _('Press Esc to cancel or Backspace to disable the keyboard shortcut'),
@@ -519,7 +516,7 @@ export const ItemFactory = class {
     }
 };
 
-export class AdwPrefs {
+var AdwPrefs = class {
     constructor(gOptions) {
         Me.opt = gOptions;
     }
@@ -594,7 +591,7 @@ export class AdwPrefs {
         page.add(group);
         return page;
     }
-}
+};
 
 const DropDownItem = GObject.registerClass({
     // Registered name should be unique

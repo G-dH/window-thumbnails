@@ -9,17 +9,43 @@
 
 'use strict';
 
-import Gtk from 'gi://Gtk';
+const { Gtk } = imports.gi;
 
-import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
-
-import * as Settings from './settings.js';
-import * as OptionsFactory from './optionsFactory.js';
+const ExtensionUtils = imports.misc.extensionUtils;
+const MyExtension = ExtensionUtils.getCurrentExtension();
+const OptionsFactory = MyExtension.imports.optionsFactory;
+const Settings = MyExtension.imports.settings;
 
 // gettext
 let _;
 
-export default class WTMB extends ExtensionPreferences {
+function init() {
+    ExtensionUtils.initTranslations(MyExtension.metadata['gettext-domain']);
+}
+
+function fillPreferencesWindow(window) {
+    const wtmb = new WTMB(window);
+    wtmb.fillPreferencesWindow(window);
+}
+
+
+class WTMB {
+    constructor(window) {
+        const Me = {};
+        Me.window = window;
+        Me.path = MyExtension.path;
+        Me.metadata = MyExtension.metadata;
+        Me.gSettings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
+        Me.opt = new Settings.Options(Me);
+        Me._ = imports.gettext.domain(Me.metadata['gettext-domain']).gettext;
+        _ = Me._;
+
+        OptionsFactory.init(Me);
+
+        this.opt = Me.opt;
+        this.Me = Me;
+    }
+
     _getPageList() {
         const itemFactory = new OptionsFactory.ItemFactory();
         const pageList = [
@@ -59,21 +85,6 @@ export default class WTMB extends ExtensionPreferences {
     }
 
     fillPreferencesWindow(window) {
-        const Me = {};
-        Me.gSettings = this.getSettings();
-        Me._ = this.gettext.bind(this);
-        _ = Me._;
-        Me.metadata = this.metadata;
-        Me.path = this.path;
-        Me.window = window;
-
-        this.opt = new Settings.Options(Me);
-        Me.opt = this.opt;
-
-        OptionsFactory.init(Me);
-
-        this.Me = Me;
-
         window = new OptionsFactory.AdwPrefs(this.opt).getFilledWindow(window, this._getPageList());
         window.connect('close-request', () => {
             this.opt.destroy();
@@ -86,7 +97,7 @@ export default class WTMB extends ExtensionPreferences {
     }
 
 
-    // ////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////// /////////////////////
 
     _getBehaviorOptionList(itemFactory) {
         const optionList = [];

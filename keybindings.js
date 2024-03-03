@@ -10,10 +10,9 @@
 // https://github.com/GSConnect/gnome-shell-extension-gsconnect/blob/master/src/shell/keybindings.js
 'use strict';
 
-import Meta from 'gi://Meta';
-import Shell from 'gi://Shell';
+const { Meta, Shell } = imports.gi;
 
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+const Main = imports.ui.main;
 
 /**
  * Keybindings.Manager is a simple convenience class for managing keyboard
@@ -30,7 +29,7 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
  *     https://developer.gnome.org/meta/stable/meta-MetaKeybinding.html
  *     https://gitlab.gnome.org/GNOME/gnome-shell/blob/master/js/ui/windowManager.js#L1093-1112
  */
-export class Manager {
+var Manager = class Manager {
     constructor() {
         this._keybindings = new Map();
 
@@ -107,5 +106,5 @@ export class Manager {
         global.display.disconnect(this._acceleratorActivatedId);
         this.removeAll();
     }
-}
+};
 

@@ -9,16 +9,10 @@
 
 'use strict';
 
-import GLib from 'gi://GLib';
-import Clutter from 'gi://Clutter';
-import St from 'gi://St';
-import Meta from 'gi://Meta';
-import Mtk from 'gi://Mtk';
-import GObject from 'gi://GObject';
-import Graphene from 'gi://Graphene';
+const { Clutter, GLib, GObject, Meta, St, Graphene } = imports.gi;
 
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import * as DND from 'resource:///org/gnome/shell/ui/dnd.js';
+const Main = imports.ui.main;
+const DND = imports.ui.dnd;
 
 let Me;
 let opt;
@@ -30,7 +24,7 @@ const CLOSE_BTN_OPACITY = 240;
 const ANIMATION_TIME = 400; // windowManager.MINIMIZE_WINDOW_ANIMATION_TIME
 
 
-export const WinTmbModule = class {
+var WinTmbModule = class {
     constructor(me) {
         Me = me;
         opt = Me.opt;
@@ -385,7 +379,7 @@ const WindowThumbnail = GObject.registerClass({
     }
 
     _createTmbGeometry() {
-        this._geometry = new Mtk.Rectangle();
+        this._geometry = new Meta.Rectangle();
         this._geometry.monitorIndex = this._monitor.index;
         this._geometry.scale = this._getDefaultScale();
 
@@ -526,7 +520,7 @@ const WindowThumbnail = GObject.registerClass({
         const offsetX = (this.width * scale - this.width) / 2;
         const offsetY = (this.height * scale - this.height) / 2;
         const tmbGeo = this._geometry;
-        const iconGeometry = new Mtk.Rectangle({
+        const iconGeometry = new Meta.Rectangle({
             // compensate for window's shadow box
             x: Math.round(tmbGeo.x - offsetX),
             y: Math.round(tmbGeo.y - offsetY),
@@ -590,6 +584,7 @@ const WindowThumbnail = GObject.registerClass({
         // We can't change the default minimize/maximize animation time
         // As a workaround
         // we temporarily adjust the global animation speed and restore it after the animation completes
+        const ANIMATION_TIME = 400; // windowManager.MINIMIZE_WINDOW_ANIMATION_TIME = 400
         let delay = ANIMATION_TIME;
         const stSettings = St.Settings.get();
         const globWT = global.windowThumbnails;
@@ -882,12 +877,12 @@ const WindowThumbnail = GObject.registerClass({
             this.hide();
             // If animation speed is not default, assistance is needed
             // Set timeout for the unminimize animation and emit 'remove' signal after the animation
-            if (opt.ANIMATION_TIME !== ANIMATION_TIME)
+            if (opt.ANIMATION_TIME !== 400) // 400 is default
                 this._setMinimizedAnimationDelay(false);
             this._activateWinOnCurrentWs();
             // Restore the original icon geometry so it will animate normal minimize to the proper target
             this._metaWin.set_icon_geometry(this._origIconGeometry);
-            if (opt.ANIMATION_TIME === ANIMATION_TIME) {
+            if (opt.ANIMATION_TIME === 400) {
                 if (this._minimizeDelayId) {
                     GLib.source_remove(this._minimizeDelayId);
                     this._minimizeDelayId = 0;
