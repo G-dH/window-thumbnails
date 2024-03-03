@@ -1,0 +1,15 @@
+{
+  "description": "Allows the creation of window clones for use as Picture-in-Picture (PIP) live thumbnails",
+  "gettext-domain": "window-thumbnails",
+  "settings-schema": "org.gnome.shell.extensions.window-thumbnails",
+  "name": "WTMB (Window Thumbnails)",
+  "shell-version": [
+    "45",
+    "46"
+  ],
+  "url": "https://github.com/G-dH/window-thumbnails",
+  "donations": {"buymeacoffee": "georgdh"},
+  "uuid": "window-thumbnails@G-dH.github.com",
+  "version-name": "46.0",
+  "version": 1
+}
