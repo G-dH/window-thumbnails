@@ -1,5 +1,5 @@
 /**
- * WSP (Windows Search Provider)
+ * WTMB (Window Thumbnails)
  * optionsFactory.js
  *
  * @author     GdH <G-dH@github.com>

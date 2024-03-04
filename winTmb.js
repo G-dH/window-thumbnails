@@ -1,6 +1,6 @@
 /**
  * WTMB (Window Thumbnails)
- * WinTmb
+ * winTmb.js
  *
  * @author     GdH <G-dH@github.com>
  * @copyright  2024
