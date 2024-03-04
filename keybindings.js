@@ -1,6 +1,6 @@
 /**
  * WTMB (Window Thumbnails)
- * WinTmb
+ * keybindings.js
  *
  * @author     GdH <G-dH@github.com>
  * @copyright  2024
