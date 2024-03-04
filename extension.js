@@ -15,7 +15,7 @@ import * as Extension from 'resource:///org/gnome/shell/extensions/extension.js'
 
 // Me imports
 import * as Settings from './settings.js';
-import { WinTmbModule } from './winTmb.js';
+import { WinTmb } from './winTmb.js';
 import * as Keybindings from './keybindings.js';
 import * as Util from './util.js';
 
@@ -27,14 +27,13 @@ export default class WTMB extends Extension.Extension {
         Me.gSettings = this.getSettings();
         Me._ = this.gettext.bind(this);
         Me.Util = Util;
+        Util.init(Me);
 
         Me.opt = new Settings.Options(Me);
 
         this.Me = Me;
 
-        Util.init(Me);
-        this._wt = new WinTmbModule(Me);
-        this._wt.update();
+        this._winTmb = new WinTmb(Me);
 
         Me.opt.connect('changed', (settings, key) => {
             if (key.includes('shortcut'))
@@ -65,13 +64,12 @@ export default class WTMB extends Extension.Extension {
             this._keybindingsManager = null;
         }
 
-        this._wt.update(true);
-        this._wt.cleanGlobals();
+        this._winTmb.destroy();
         this.Me.opt.destroy();
         this.Me.opt = null;
         this.Me.Util.cleanGlobals();
         this.Me = null;
-        this._wt = null;
+        this._winTmb = null;
 
         console.debug(`${this.metadata.name}: disabled`);
     }
@@ -95,34 +93,31 @@ export default class WTMB extends Extension.Extension {
         const shortcuts = [
             {
                 keyVar: 'createTmbShortcut',
-                callback: () => {
-                    const metaWin = global.display.get_tab_list(0, null)[0];
-                    return this._wt.createThumbnail(metaWin);
-                },
+                callback: () => this._winTmb.createThumbnail(),
             },
             {
                 keyVar: 'minimizeToTmbShortcut',
-                callback: () => this._wt.minimizeToThumbnail(),
+                callback: () => this._winTmb.minimizeToThumbnail(),
             },
             {
                 keyVar: 'removeLastShortcut',
-                callback: () => this._wt.removeLast(),
+                callback: () => this._winTmb.removeLast(),
             },
             {
                 keyVar: 'removeAllShortcut',
-                callback: () => this._wt.removeAll(),
+                callback: () => this._winTmb.removeAll(),
             },
             {
                 keyVar: 'toggleVisibilityShortcut',
-                callback: () => this._wt.toggleShowAll(),
+                callback: () => this._winTmb.toggleShowAll(),
             },
             {
                 keyVar: 'switchSourceNextShortcut',
-                callback: () => this._wt.switchSourceNext(),
+                callback: () => this._winTmb.switchSourceNext(),
             },
             {
                 keyVar: 'switchSourcePrevShortcut',
-                callback: () => this._wt.switchSourcePrev(),
+                callback: () => this._winTmb.switchSourcePrev(),
             },
         ];
 

@@ -24,41 +24,17 @@ let Me;
 let opt;
 let _;
 
-// const SCROLL_ICON_OPACITY = 240;
 const DRAG_OPACITY = 200;
 const CLOSE_BTN_OPACITY = 240;
-const ANIMATION_TIME = 400; // windowManager.MINIMIZE_WINDOW_ANIMATION_TIME
+const MINIMIZE_WINDOW_ANIMATION_MODE = Clutter.AnimationMode.EASE_OUT_EXPO; // WindowManager.MINIMIZE_WINDOW_ANIMATION_MODE
 
-
-export const WinTmbModule = class {
+export const WinTmb = class {
     constructor(me) {
         Me = me;
         opt = Me.opt;
         _ = Me._;
 
-        this._firstActivation = true;
-        this.moduleEnabled = false;
-    }
-
-    cleanGlobals() {
-        Me = null;
-        opt = null;
-        _ = null;
-    }
-
-    update(reset) {
-        this._removeTimeouts();
-
-        if (reset)
-            this._disableModule();
-        else
-            this._activateModule();
-    }
-
-    _activateModule() {
-        this._timeouts = {};
-        if (!this._windowThumbnails)
-            this._windowThumbnails = [];
+        this._windowThumbnails = [];
 
         Main.overview.connectObject('hiding', () => {
             if (!this._thumbnailsHiddenByUser)
@@ -79,26 +55,17 @@ export const WinTmbModule = class {
             switchSourcePrev: this.switchSourcePrev.bind(this),
             getThumbnails: () => this._windowThumbnails,
         };
-
-        console.debug('  WinTmb - Activated');
     }
 
-    _disableModule() {
+    destroy() {
         Main.overview.disconnectObject(this);
+        // Remove thumbnails
         this.removeAll();
+        // Remove global API
         global.windowThumbnails = null;
-
-        console.debug('  WinTmb - Disabled');
-    }
-
-    _removeTimeouts() {
-        if (this._timeouts) {
-            Object.values(this._timeouts).forEach(t => {
-                if (t)
-                    GLib.source_remove(t);
-            });
-            this._timeouts = null;
-        }
+        Me = null;
+        opt = null;
+        _ = null;
     }
 
     createThumbnail(metaWin, minimize = false) {
@@ -130,8 +97,7 @@ export const WinTmbModule = class {
             // Only one thumbnail of each window is allowed
             if (tmb._metaWin === metaWin)
                 tmb.remove();
-            else
-            if (tmb._monitor === monitor && tmb.y < yOffset)
+            else if (!tmb._tmbDestroyed && tmb._monitor === monitor && tmb.y < yOffset)
                 yOffset = tmb.y;
         }
 
@@ -145,6 +111,7 @@ export const WinTmbModule = class {
         this._windowThumbnails.push(thumbnail);
         thumbnail.connect('remove', tmb => {
             this._windowThumbnails.splice(this._windowThumbnails.indexOf(tmb), 1);
+            tmb.removeTimeouts();
             tmb.destroy();
         });
 
@@ -152,13 +119,14 @@ export const WinTmbModule = class {
     }
 
     _getCurrentWindow() {
-        const metaWin = global.display.get_tab_list(0, null)[0];
-        if (!metaWin)
-            return null;
+        for (let metaWin of global.display.get_tab_list(0, null)) {
+            if (!metaWin.minimized && !metaWin._minimizeInProgress &&
+                metaWin.get_workspace() === global.workspaceManager.get_active_workspace()
 
-        return metaWin.get_workspace() === global.workspaceManager.get_active_workspace()
-            ? metaWin
-            : null;
+            )
+                return metaWin;
+        }
+        return null;
     }
 
     minimizeToThumbnail(metaWin) {
@@ -227,7 +195,7 @@ export const WinTmbModule = class {
 
         for (let i = this._windowThumbnails.length - 1; i > -1; i--) {
             const tmb = this._windowThumbnails[i];
-            if (tmb.visible) {
+            if (!tmb._tmbDestroyed) {
                 tmb.remove();
                 break;
             }
@@ -271,6 +239,8 @@ const WindowThumbnail = GObject.registerClass({
             can_focus: true,
             track_hover: true,
         });
+
+        this._timeouts = {};
 
         // this._metaWin
         // this._windowActor
@@ -332,16 +302,8 @@ const WindowThumbnail = GObject.registerClass({
 
         if (this._minimized) {
             this._applyGeometry();
-
             this.opacity = 0;
-            // Set the window target geometry to the size of this
-            this._updateWindowIconGeometry();
-            // icon geometry is a target rectangle for the minimize animation
-            // store the default and restore it in this.remove
-            [, this._origIconGeometry] = metaWin.get_icon_geometry();
-            // Set delay for the minimize animation and then show the thumbnail
-            this._setMinimizedAnimationDelay();
-            metaWin.minimize();
+            this._animateToMinimize();
         } else {
             this._animateNewTmb();
         }
@@ -355,6 +317,43 @@ const WindowThumbnail = GObject.registerClass({
         Main.layoutManager.connectObject('monitors-changed', () => this._onMonitorsChanged(), this);
 
         this.tmbRedrawDirection = true;
+    }
+
+    remove() {
+        if (this._tmbDestroyed)
+            return;
+        this._tmbDestroyed = true;
+
+        this.remove_all_transitions();
+
+        const disconnect = true;
+        this._updateSourceConnections(disconnect);
+
+        Main.layoutManager.disconnectObject(this);
+
+        if (this._winPreview)
+            this._destroyWindowPreview();
+
+        if (this._minimized) {
+            // Hide the thumbnail so it will be invisible during transition animation
+            this.hide();
+            this._activateWinOnCurrentWs();
+            this._animateFromMinimize();
+        } else {
+            this.emit('remove');
+        }
+
+        this._metaWin._thumbnailGeometry = this._geometry;
+    }
+
+    removeTimeouts() {
+        if (this._timeouts) {
+            Object.values(this._timeouts).forEach(t => {
+                if (t)
+                    GLib.source_remove(t);
+            });
+            this._timeouts = null;
+        }
     }
 
     _updateMetaWinSources(metaWin) {
@@ -379,7 +378,8 @@ const WindowThumbnail = GObject.registerClass({
         if (this._minimized) {
             // if window has been unminimized, remove thumbnail
             this._metaWin.connectObject('shown', () => {
-                this.remove();
+                if (!this._tmbDestroyed)
+                    this.remove();
             }, this);
         }
     }
@@ -519,37 +519,28 @@ const WindowThumbnail = GObject.registerClass({
         this._applyGeometrySize();
     }
 
-    // set an area to/from which the window should animate minimize/unminimize
-    _updateWindowIconGeometry() {
-        // Compensate for shadow box
+    _getTransitionGeometry() {
+        // Compensate geometry for shadow box
         const scale = this._clone.scale_x;
         const offsetX = (this.width * scale - this.width) / 2;
         const offsetY = (this.height * scale - this.height) / 2;
         const tmbGeo = this._geometry;
         const iconGeometry = new Mtk.Rectangle({
-            // compensate for window's shadow box
             x: Math.round(tmbGeo.x - offsetX),
             y: Math.round(tmbGeo.y - offsetY),
             width: Math.round(tmbGeo.width * scale),
             height: Math.round(tmbGeo.height * scale),
         });
-        // icon geometry is a target rectangle for the minimize and starting for unminimize animations
-        this._metaWin.set_icon_geometry(iconGeometry);
+        return iconGeometry;
     }
 
     _getCurrentTmbMonitor() {
         const monitors = Main.layoutManager.monitors;
         let monitor = null;
 
-        /* const [x, y] = this.get_position();
-        const [width, height] = this.get_size();*/
         const monitorIndex = global.display.get_monitor_index_for_rect(this._geometry);
         monitor = monitors[monitorIndex];
 
-        /* monitors.forEach(mon => {
-            if (x >= mon.x && y >= mon.y && x < mon.x + mon.width && y < mon.y + mon.height)
-                monitor = mon;
-        });*/
         return monitor;
     }
 
@@ -565,76 +556,8 @@ const WindowThumbnail = GObject.registerClass({
         this._geometry.monitorIndex = monitor.index;
     }
 
-    // Animate new thumbnail from the source window to the thumbnail position
-    _animateNewTmb() {
-        if (!this._geometry)
-            this._createTmbGeometry();
-
-        const tmbGeo = this._geometry;
-
-        const { width, height } = tmbGeo;
-        const { x, y } = tmbGeo;
-
-        this.x = this._winGeometry.x;
-        this.y = this._winGeometry.y;
-
-        this.ease({
-            x, y,
-            width, height,
-            duration: opt.ANIMATION_TIME,
-            mode: Clutter.AnimationMode.EASE_OUT_EXPO,
-        });
-    }
-
-    _setMinimizedAnimationDelay(minimize = true) {
-        // We can't change the default minimize/maximize animation time
-        // As a workaround
-        // we temporarily adjust the global animation speed and restore it after the animation completes
-        let delay = ANIMATION_TIME;
-        const stSettings = St.Settings.get();
-        const globWT = global.windowThumbnails;
-
-        if (!globWT._originalSlowDownFactor && (opt.ANIMATION_TIME !== ANIMATION_TIME)) {
-            const currentSlowdownFactor = stSettings.slow_down_factor;
-            // Make the process globally visible to avoid conflicts between thumbnails
-            globWT._originalSlowDownFactor = currentSlowdownFactor;
-            const factorScale = opt.ANIMATION_TIME / ANIMATION_TIME;
-            // slow_down_factor cannot be too small
-            stSettings.slow_down_factor = Math.max(0.01, currentSlowdownFactor * factorScale);
-            // synchronize delay with the current animation speed
-            delay = factorScale * ANIMATION_TIME;
-            if (!globWT._wtQueue)
-                globWT._wtQueue = [];
-            globWT._wtQueue.push(true);
-        } else if (globWT._originalSlowDownFactor) {
-            delay = stSettings.slow_down_factor * ANIMATION_TIME;
-            globWT._wtQueue.push(true);
-        }
-
-        this._minimizeDelayId = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT,
-            delay,
-            () => {
-                if (globWT._originalSlowDownFactor) {
-                    globWT._wtQueue.pop();
-                    if (!globWT._wtQueue.length) {
-                        stSettings.slow_down_factor = globWT._originalSlowDownFactor;
-                        delete globWT._wtQueue;
-                        delete globWT._originalSlowDownFactor;
-                    }
-                }
-                if (minimize)
-                    this.opacity = 255;
-                else
-                    this.emit('remove');
-                this._minimizeDelayId = 0;
-                return GLib.SOURCE_REMOVE;
-            }
-        );
-    }
-
     _onEnterEvent() {
-        if (!this._getHover() || this._showTimeoutId || this._tmbDestroyed)
+        if (!this._getHover() || this._timeouts.show || this._tmbDestroyed)
             return;
 
         global.display.set_cursor(Meta.Cursor.POINTING_HAND);
@@ -643,10 +566,10 @@ const WindowThumbnail = GObject.registerClass({
         if (!(this.HOVER_SHOW_PREVIEW  || this.HOVER_HIDE_TMB) || Me.Util.isAltPressed())
             return;
 
-        if (this._hoverActionDelayId)
-            GLib.source_remove(this._hoverActionDelayId);
+        if (this._timeouts.hoverDelay)
+            GLib.source_remove(this._timeouts.hoverDelay);
 
-        this._hoverActionDelayId = GLib.timeout_add(
+        this._timeouts.hoverDelay = GLib.timeout_add(
             GLib.PRIORITY_DEFAULT,
             opt.HOVER_DELAY,
             () => {
@@ -660,7 +583,7 @@ const WindowThumbnail = GObject.registerClass({
                     this._lastAllocation.y1 = this.allocation.y1;
                     this._lastAllocation.y2 = this.allocation.y2;
                     this.hide();
-                    this._showTimeoutId = GLib.timeout_add(
+                    this._timeouts.show = GLib.timeout_add(
                         GLib.PRIORITY_DEFAULT,
                         500,
                         () => {
@@ -668,14 +591,14 @@ const WindowThumbnail = GObject.registerClass({
                                 return GLib.SOURCE_CONTINUE;
                             } else {
                                 this.show();
-                                this._showTimeoutId = 0;
+                                this._timeouts.show = 0;
                                 return GLib.SOURCE_REMOVE;
                             }
                         }
                     );
                 }
 
-                this._hoverActionDelayId = 0;
+                this._timeouts.hoverDelay = 0;
                 return GLib.SOURCE_REMOVE;
             }
         );
@@ -688,9 +611,9 @@ const WindowThumbnail = GObject.registerClass({
         if (this._tmbDestroyed)
             return;
 
-        if (this._hoverActionDelayId) {
-            GLib.source_remove(this._hoverActionDelayId);
-            this._hoverActionDelayId = 0;
+        if (this._timeouts.hoverDelay) {
+            GLib.source_remove(this._timeouts.hoverDelay);
+            this._timeouts.hoverDelay = 0;
         }
 
         global.display.set_cursor(Meta.Cursor.DEFAULT);
@@ -860,54 +783,6 @@ const WindowThumbnail = GObject.registerClass({
     _onMonitorsChanged() {
         // Thumbnail may stay out of the screen after changing configuration
         this._fixGeometryPosition();
-    }
-
-    remove() {
-        this._tmbDestroyed = true;
-
-        this.remove_all_transitions();
-
-        const disconnect = true;
-        this._updateSourceConnections(disconnect);
-
-        Main.layoutManager.disconnectObject(this);
-
-        if (this._winPreview)
-            this._destroyWindowPreview();
-
-        if (this._minimized) {
-            // Update the window icon geometry so the unminimize animation have a proper staring position and size
-            this._updateWindowIconGeometry();
-            // Hide the thumbnail so it will be invisible during assisted unminimize animation
-            this.hide();
-            // If animation speed is not default, assistance is needed
-            // Set timeout for the unminimize animation and emit 'remove' signal after the animation
-            if (opt.ANIMATION_TIME !== ANIMATION_TIME)
-                this._setMinimizedAnimationDelay(false);
-            this._activateWinOnCurrentWs();
-            // Restore the original icon geometry so it will animate normal minimize to the proper target
-            this._metaWin.set_icon_geometry(this._origIconGeometry);
-            if (opt.ANIMATION_TIME === ANIMATION_TIME) {
-                if (this._minimizeDelayId) {
-                    GLib.source_remove(this._minimizeDelayId);
-                    this._minimizeDelayId = 0;
-                }
-                this.emit('remove');
-            }
-        } else {
-            this.emit('remove');
-        }
-
-        this._metaWin._thumbnailGeometry = this._geometry;
-    }
-
-    _actionTimeoutActive() {
-        const timeout = this._reverseTmbWheelFunc ? this._scrollTimeout : this._scrollTimeout / 4;
-        if (!this._lastActionTime || Date.now() - this._lastActionTime > timeout) {
-            this._lastActionTime = Date.now();
-            return false;
-        }
-        return true;
     }
 
     _addControls() {
@@ -1130,9 +1005,112 @@ const WindowThumbnail = GObject.registerClass({
         this.add_child(this._scrollModeBin);
         this._scrollModeBin.opacity = 0;
     }*/
+
+    _animateNewTmb() {
+        const tmbGeo = this._geometry;
+
+        const { width, height } = tmbGeo;
+        const { x, y } = tmbGeo;
+
+        this.x = this._winGeometry.x;
+        this.y = this._winGeometry.y;
+
+        this.ease({
+            x, y,
+            width, height,
+            duration: opt.ANIMATION_TIME,
+            mode: Clutter.AnimationMode.EASE_OUT_EXPO,
+        });
+    }
+
+    _animateToMinimize() {
+        // Animate the original window actor and then replace it with the thumbnail
+        // The original actor is hidden when the animation completes
+        this._metaWin._minimizeInProgress = true;
+        const actor = this._windowActor;
+        // Removing transition also means completing (un)minimize
+        actor.remove_all_transitions();
+
+        let xDest, yDest, xScale, yScale;
+        // get geometry compensated for box shadow
+        const geometry = this._getTransitionGeometry();
+        xDest = geometry.x;
+        yDest = geometry.y;
+        xScale = geometry.width / actor.width;
+        yScale = geometry.height / actor.height;
+
+        actor.ease({
+            scale_x: xScale,
+            scale_y: yScale,
+            x: xDest,
+            y: yDest,
+            duration: opt.ANIMATION_TIME,
+            mode: MINIMIZE_WINDOW_ANIMATION_MODE,
+            onStopped: () => {
+                // Trigger the 'minimize' signal
+                if (!this._metaWin.minimized)
+                    this._metaWin.minimize();
+
+                // Cancel the original animation which triggers its 'onStopped' callback and finishes the transition
+                actor.remove_all_transitions();
+                // Hide the original windowActor
+                actor.hide();
+                actor.set_position(xDest, yDest);
+                actor.set_scale(1, 1);
+                // Replace windowActor with thumbnail
+                this.opacity = 255;
+                this._metaWin._minimizeInProgress = false;
+            },
+        });
+    }
+
+    _animateFromMinimize() {
+        // The thumbnail has been already hidden
+        // Show the original windowActor and animate it to its original position and size
+        const actor = this._windowActor;
+        actor.remove_all_transitions();
+        if (this._metaWin.minimized) {
+            this._metaWin.unminimize();
+            // If some transition is in progress, the window is probably being minimized
+            // Canceling the original transition triggers its 'onStopped' callback and finishes the minimization
+            actor.remove_all_transitions();
+        }
+
+        const geometry = this._getTransitionGeometry();
+
+        actor.set_position(geometry.x, geometry.y);
+        actor.set_scale(
+            geometry.width / actor.width,
+            geometry.height / actor.height);
+
+        const rect = actor.meta_window.get_buffer_rect();
+        let [xDest, yDest] = [rect.x, rect.y];
+
+        actor.show();
+        actor.ease({
+            scale_x: 1,
+            scale_y: 1,
+            x: xDest,
+            y: yDest,
+            duration: opt.ANIMATION_TIME,
+            mode: MINIMIZE_WINDOW_ANIMATION_MODE,
+            onStopped: () => {
+                // Trigger the 'unminimize' signal
+                if (this._metaWin.minimized)
+                    this._metaWin.unminimize();
+                // Cancel the default minimize animation which triggers its 'onStopped' callback
+                // and changes the window 'minimize' property
+                actor.remove_all_transitions();
+                actor.set_position(xDest, yDest);
+                actor.set_scale(1, 1);
+                // destroy the thumbnail
+                this.emit('remove');
+            },
+        });
+    }
 });
 
-// Copy of AltTab.CyclerHighlight
+// Based on AltTab.CyclerHighlight
 const WindowPreview = GObject.registerClass(
 class WindowPreview extends St.Widget {
     _init() {
