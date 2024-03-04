@@ -1,0 +1,436 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR GdH
+# This file is distributed under the same license as the window-thumbnails package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: window-thumbnails\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-04 17:38+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: prefs.js:27 prefs.js:273
+msgid "Geometry"
+msgstr ""
+
+#: prefs.js:32 prefs.js:96
+msgid "Behavior"
+msgstr ""
+
+#: prefs.js:37 prefs.js:315
+msgid "Controls"
+msgstr ""
+
+#: prefs.js:42
+msgid "Shortcuts"
+msgstr ""
+
+#: prefs.js:47
+msgid "Mouse"
+msgstr ""
+
+#: prefs.js:52
+msgid "About"
+msgstr ""
+
+#: prefs.js:102
+msgid "Maximum Number Of Thumbnails"
+msgstr ""
+
+#: prefs.js:103
+msgid ""
+"Limit the number of thumbnails to one if you do not need more and want to "
+"simplify control. In this case, creating a new thumbnail removes the "
+"existing one. This limit does not apply to the \"Minimize to thumbnail\" "
+"action"
+msgstr ""
+
+#: prefs.js:107
+msgid "Unlimited"
+msgstr ""
+
+#: prefs.js:108
+msgid "Only One"
+msgstr ""
+
+#: prefs.js:115
+msgid "Mouse Hover Action"
+msgstr ""
+
+#: prefs.js:116
+msgid ""
+"Choose how the thumbnail should behave when hovered by the mouse pointer. "
+"The \"Show Full Size Preview\" option can also be toggled by right-clicking "
+"on the thumbnail. To prevent the execution of the selected action, hold down "
+"the Alt key while hovering the mouse pointer over the thumbnail"
+msgstr ""
+
+#: prefs.js:120
+msgid "No Action"
+msgstr ""
+
+#: prefs.js:121
+msgid "Show Full Size Preview"
+msgstr ""
+
+#: prefs.js:122
+msgid "Hide"
+msgstr ""
+
+#: prefs.js:136
+msgid "Mouse Hover Action Delay"
+msgstr ""
+
+#: prefs.js:137
+msgid ""
+"Adjusts the delay before the selected action is performed. This delay allows "
+"you to drag the thumbnail to another position before it is hidden or a full-"
+"size preview is created"
+msgstr ""
+
+#: prefs.js:155
+msgid "Animation Time (ms)"
+msgstr ""
+
+#: prefs.js:156
+msgid "Adjusts speed of transition animations"
+msgstr ""
+
+#: prefs.js:171
+msgid "Thumbnail Opacity (%)"
+msgstr ""
+
+#: prefs.js:172
+msgid ""
+"Adjusts the default thumbnail opacity. You can modify the opacity at any "
+"time using the Shift + Scroll shortcut while hovering the thumbnail"
+msgstr ""
+
+#: prefs.js:187
+msgid "Default Size"
+msgstr ""
+
+#: prefs.js:200
+msgid "Thumbnail scale (%)"
+msgstr ""
+
+#: prefs.js:201
+msgid ""
+"The size of the thumbnail in the selected axis relative to the screen width "
+"or height (set below)"
+msgstr ""
+
+#: prefs.js:209
+msgid "Scale Axis"
+msgstr ""
+
+#: prefs.js:210
+msgid ""
+"Choose whether the scale should be applied to the height or width of the "
+"thumbnail. The original aspect ratio will be preserved"
+msgstr ""
+
+#: prefs.js:214
+msgid "Height"
+msgstr ""
+
+#: prefs.js:215
+msgid "Width"
+msgstr ""
+
+#: prefs.js:222
+msgid "Default Position"
+msgstr ""
+
+#: prefs.js:228
+msgid "Custom Position"
+msgstr ""
+
+#: prefs.js:229
+msgid ""
+"Set a custom default position for the new thumbnail on the screen, or allow "
+"it to display at the mouse pointer position. You can then drag and drop the "
+"thumbnail anywhere on the screen whenever you want"
+msgstr ""
+
+#: prefs.js:244
+#, javascript-format
+msgid "Horizontal Position (% of screen width from left)"
+msgstr ""
+
+#: prefs.js:245
+msgid "Adjusts horizontal position of the new thumbnail"
+msgstr ""
+
+#: prefs.js:262
+#, javascript-format
+msgid "Vertical Position (% of screen height from top)"
+msgstr ""
+
+#: prefs.js:263
+msgid "Adjusts vertical position of the new thumbnail"
+msgstr ""
+
+#: prefs.js:279
+msgid "Remember Geometry"
+msgstr ""
+
+#: prefs.js:280
+msgid ""
+"Enable this option to remember the geometry, restoring the size and position "
+"when creating a thumbnail with the same source window as a previously "
+"removed one"
+msgstr ""
+
+#: prefs.js:294
+msgid "Buttons"
+msgstr ""
+
+#: prefs.js:300
+msgid "Show Close/Unminimize Button"
+msgstr ""
+
+#: prefs.js:301
+msgid ""
+"Show the Close/Unminimize Button, which allows you to remove the window "
+"thumbnail"
+msgstr ""
+
+#: prefs.js:320 prefs.js:332
+msgid "Disable"
+msgstr ""
+
+#: prefs.js:321
+msgid "Activate Source Window"
+msgstr ""
+
+#: prefs.js:322
+msgid "Activate Source On Current Workspace"
+msgstr ""
+
+#: prefs.js:323
+msgid "Remove Thumbnail"
+msgstr ""
+
+#: prefs.js:324
+msgid "Close Source Window"
+msgstr ""
+
+#: prefs.js:325
+msgid "Toggle Window Preview"
+msgstr ""
+
+#: prefs.js:326
+msgid "Toggle Hide On Hover"
+msgstr ""
+
+#: prefs.js:327
+msgid "Reset Thumbnail Scale"
+msgstr ""
+
+#: prefs.js:328
+msgid "Open WT Preferences"
+msgstr ""
+
+#: prefs.js:333
+msgid "Resize"
+msgstr ""
+
+#: prefs.js:334
+msgid "Switch Source Window"
+msgstr ""
+
+#: prefs.js:335
+msgid "Change Opacity"
+msgstr ""
+
+#: prefs.js:340
+msgid "Double Click Action"
+msgstr ""
+
+#: prefs.js:350
+msgid "Middle Button Action"
+msgstr ""
+
+#: prefs.js:360
+msgid "Secondary Button Action"
+msgstr ""
+
+#: prefs.js:370
+msgid "Ctrl + Primary Button Action"
+msgstr ""
+
+#: prefs.js:380
+msgid "Ctrl + Secondary Button Action"
+msgstr ""
+
+#: prefs.js:390
+msgid "Scroll Wheel Action"
+msgstr ""
+
+#: prefs.js:400
+msgid "Ctrl + Scroll Wheel Action"
+msgstr ""
+
+#: prefs.js:410
+msgid "Shift + Scroll Wheel Action"
+msgstr ""
+
+#: prefs.js:426
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: prefs.js:432
+msgid "Create Window Thumbnail"
+msgstr ""
+
+#: prefs.js:433
+msgid "Creates a new live thumbnail of the currently focused window"
+msgstr ""
+
+#: prefs.js:441
+msgid "Minimize To Thumbnail"
+msgstr ""
+
+#: prefs.js:442
+msgid ""
+"Minimizes the currently focused window to the newly created live thumbnail"
+msgstr ""
+
+#: prefs.js:450
+msgid "Remove Last Thumbnail"
+msgstr ""
+
+#: prefs.js:451
+msgid "Removes the last-created window thumbnail"
+msgstr ""
+
+#: prefs.js:459
+msgid "Remove All Thumbnails"
+msgstr ""
+
+#: prefs.js:460
+msgid "Removes all window thumbnails"
+msgstr ""
+
+#: prefs.js:468
+msgid "Toggle Thumbnails Visibility"
+msgstr ""
+
+#: prefs.js:469
+msgid "Temporarily hides all created thumbnails"
+msgstr ""
+
+#: prefs.js:477
+msgid "Switch Source Window To Next"
+msgstr ""
+
+#: prefs.js:478 prefs.js:487
+msgid ""
+"Replaces the source window of a thumbnail. This action applies to the last "
+"thumbnail that was not created as \"Minimize To Thumbnail\""
+msgstr ""
+
+#: prefs.js:486
+msgid "Switch Source Window To Previous"
+msgstr ""
+
+#: prefs.js:508
+msgid "Version"
+msgstr ""
+
+#: prefs.js:514
+msgid "Reset all options"
+msgstr ""
+
+#: prefs.js:515
+msgid "Set all options to default values."
+msgstr ""
+
+#: prefs.js:521
+msgid "Links"
+msgstr ""
+
+#: prefs.js:525
+msgid "Homepage"
+msgstr ""
+
+#: prefs.js:526
+msgid "Source code and more info about this extension"
+msgstr ""
+
+#: prefs.js:537
+msgid "GNOME Extensions"
+msgstr ""
+
+#: prefs.js:538
+msgid "Rate and comment this extension on the GNOME Extensions site"
+msgstr ""
+
+#: prefs.js:543
+msgid "Report a bug or suggest new feature"
+msgstr ""
+
+#: prefs.js:544
+msgid "Help me to help you!"
+msgstr ""
+
+#: prefs.js:549
+msgid "Buy Me a Coffee"
+msgstr ""
+
+#: prefs.js:550
+msgid "Enjoying my extensions? Consider supporting it by buying me a coffee!"
+msgstr ""
+
+#: winTmb.js:79
+msgid "This window cannot be minimized"
+msgstr ""
+
+#: optionsFactory.js:228
+msgid "<b>Enter new shortcut</b>"
+msgstr ""
+
+#: optionsFactory.js:240
+msgid "Press Esc to cancel or Backspace to disable the keyboard shortcut"
+msgstr ""
+
+#: optionsFactory.js:416
+msgid "Reset profile to defaults"
+msgstr ""
+
+#: optionsFactory.js:424
+msgid "GNOME 3"
+msgstr ""
+
+#: optionsFactory.js:425
+msgid "GNOME 40+ - Bottom Hot Edge"
+msgstr ""
+
+#: optionsFactory.js:426
+msgid "Hot Corner Centric - Top Left Hot Corner"
+msgstr ""
+
+#: optionsFactory.js:427
+msgid "Dock Overview - Bottom Hot Edge"
+msgstr ""
+
+#: optionsFactory.js:449
+msgid "Load profile"
+msgstr ""
+
+#: optionsFactory.js:458
+msgid "Save current settings into this profile"
+msgstr ""
+
+#: optionsFactory.js:510
+msgid "Disabled"
+msgstr ""
