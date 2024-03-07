@@ -81,7 +81,6 @@ export const WinTmb = class {
         }
 
         // In the single tmb mode, set the new thumbnail icon geometry to the position of the last one
-        // so the user
         if (!minimize && opt.LIMIT_TO_ONE) {
             this._removeAllNotMinimizedThumbnails();
             if (this._lastTmbGeometry)
