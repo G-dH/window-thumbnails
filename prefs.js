@@ -523,7 +523,7 @@ class WTMB {
 
         optionList.push(itemFactory.getRowWidget(
             _('Reset all options'),
-            _('Set all options to default values.'),
+            _('Reset all options to their default values'),
             itemFactory.newOptionsResetButton()
         ));
 
@@ -558,7 +558,7 @@ class WTMB {
 
         optionList.push(itemFactory.getRowWidget(
             _('Buy Me a Coffee'),
-            _('Enjoying my extensions? Consider supporting it by buying me a coffee!'),
+            _('Enjoying this extension? Consider supporting it by buying me a coffee!'),
             itemFactory.newLinkButton('https://buymeacoffee.com/georgdh')
         ));
 
