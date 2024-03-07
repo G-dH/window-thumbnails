@@ -17,12 +17,12 @@ WTMB is supported by the V-Shell, AATWS and CHC-E extensions which allows you to
 - Windows can remember position nad size of their thumbnail after the thumbnail was removed so the thumbnail can be restored later
 
 
-[<img alt="" height="100" src="https://raw.githubusercontent.com/andyholmes/gnome-shell-extensions-badge/master/get-it-on-ego.svg?sanitize=true">](https://extensions.gnome.org/extension/)
+[<img alt="" height="100" src="https://raw.githubusercontent.com/andyholmes/gnome-shell-extensions-badge/master/get-it-on-ego.svg?sanitize=true">](https://extensions.gnome.org/extension/6816/)
 
 
 ## Installation
 ### Installation from extensions.gnome.org (not yet ready)
-The easiest way to install WTMB: go to [extensions.gnome.org](https://extensions.gnome.org/extension/) and toggle the switch. This installation also gives you automatic updates in the future.
+The easiest way to install WTMB: go to [extensions.gnome.org](https://extensions.gnome.org/extension/6816/) and toggle the switch. This installation also gives you automatic updates in the future.
 
 ### Installation from GitHub repository
 The latest development version
