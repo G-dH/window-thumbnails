@@ -270,13 +270,11 @@ const WindowThumbnail = GObject.registerClass({
         this._clone = new Clutter.Clone({
             reactive: false,
             opacity: this._customOpacity,
-            pivot_point: new Graphene.Point({ x: 0.5, y: 0.5 }),
+            x_expand: true,
+            y_expand: true,
         });
         this._clone.set_source(this._windowActor);
         this.add_child(this._clone);
-
-        // "Remove" shadow box
-        this._updateCloneScale();
 
         this._addControls();
 
@@ -307,11 +305,14 @@ const WindowThumbnail = GObject.registerClass({
             this._animateNewTmb();
         }
 
-        this.connect('button-release-event', this._onBtnReleased.bind(this));
-        this.connect('scroll-event', this._onScrollEvent.bind(this));
-        // this.connect('motion-event', this._onMouseMove.bind(this)); // may be useful in the future..
-        this.connect('enter-event', this._onEnterEvent.bind(this));
-        this.connect('leave-event', this._onLeaveEvent.bind(this));
+        // "Remove" shadow box
+        this._updateCloneScale();
+
+        this.connectObject('button-release-event', this._onBtnReleased.bind(this), this);
+        this.connectObject('scroll-event', this._onScrollEvent.bind(this), this);
+        // this.connectObject('motion-event', this._onMouseMove.bind(this)); // may be useful in the future..
+        this.connectObject('enter-event', this._onEnterEvent.bind(this), this);
+        this.connectObject('leave-event', this._onLeaveEvent.bind(this), this);
         this._updateSourceConnections();
         Main.layoutManager.connectObject('monitors-changed', () => this._onMonitorsChanged(), this);
 
@@ -323,6 +324,7 @@ const WindowThumbnail = GObject.registerClass({
             return;
         this._tmbDestroyed = true;
 
+        this.disconnectObject(this);
         this.remove_all_transitions();
 
         const disconnect = true;
@@ -386,6 +388,7 @@ const WindowThumbnail = GObject.registerClass({
     _createTmbGeometry() {
         this._geometry = new Mtk.Rectangle();
         this._geometry.monitorIndex = this._monitor.index;
+        this._updateMaxScale();
         this._geometry.scale = this._getDefaultScale();
 
         // size needs this._geometry.scale set
@@ -401,7 +404,6 @@ const WindowThumbnail = GObject.registerClass({
     _getDefaultScale() {
         // Use dimensions of the source window without shadow
         const { width, height } = this._metaWin.get_frame_rect();
-        const maxScale = Math.min(this._monitor.width / width, this._monitor.height / height);
 
         let scale;
         if (opt.SCALE_AXIS_VERTICAL)
@@ -409,7 +411,7 @@ const WindowThumbnail = GObject.registerClass({
         else
             scale = (opt.DEFAULT_SCALE * this._monitor.width) / width;
 
-        return Math.min(scale, maxScale);
+        return Math.min(scale, this._maxScale);
     }
 
     _applyGeometryPosition() {
@@ -464,13 +466,38 @@ const WindowThumbnail = GObject.registerClass({
         // The clone is not reactive to mouse events, so it's like it's cropped
         // windowActor.size includes shadow box,
         // we need to get the original window size to calculate the scale
+        // Also compensate for different aspect ratio of window with and without shadow
+        // All this only if windows are not maximized or full-screen
         const shadowSizeH = this._windowActor.width - this._winGeometry.width;
         const shadowSizeV = this._windowActor.height - this._winGeometry.height;
-        const shadowSize = Math.max(shadowSizeH, shadowSizeV);
-        const cloneScale = 1 + shadowSize / this._windowActor.width;
-        this.shadowSize = shadowSize;
-        this._clone.scale_x = cloneScale;
-        this._clone.scale_y = cloneScale;
+        let shadowRatioV = 1;
+        let cloneScaleH = 1;
+        let cloneScaleV = 1;
+        if (shadowSizeH && shadowSizeV) {
+            // + 0.01 to eliminate rest of the shadow
+            cloneScaleH = 1.01 + shadowSizeH / this._windowActor.width;
+            const compensation = (this._winGeometry.width / this._winGeometry.height) / (this._windowActor.width / this._windowActor.height);
+            cloneScaleV = 1.01 + shadowSizeV / this._windowActor.height * compensation;
+
+            const offTop = this._winGeometry.y - this._windowActor.y;
+            const offBottom = this._windowActor.height - this._winGeometry.height - offTop;
+            // Compensate for different top and bottom shadow size
+            shadowRatioV = offTop / offBottom;
+        }
+        this._clone.pivot_point = new Graphene.Point({
+            x: 0.5,
+            y: 0.5 * shadowRatioV,
+        });
+
+        this._clone.scale_x = cloneScaleH;
+        this._clone.scale_y = cloneScaleV;
+    }
+
+    _updateMaxScale() {
+        this._maxScale = Math.min(
+            this._monitor.width / this._winGeometry.width,
+            this._monitor.height / this._winGeometry.height
+        );
     }
 
     _fixGeometry(apply = true) {
@@ -489,6 +516,7 @@ const WindowThumbnail = GObject.registerClass({
         tmbGeo.scale = width / this._winGeometry.width;
 
         this._fixGeometryPosition(apply);
+        this._updateMaxScale();
 
         if (apply)
             this._applyGeometry();
@@ -497,8 +525,8 @@ const WindowThumbnail = GObject.registerClass({
     _fixGeometryPosition(apply = true) {
         const tmbGeo = this._geometry;
         // Ensure the entire thumbnail will be visible on screen
-        let { x, y } = tmbGeo;
-        const { width, height } = tmbGeo;
+        let { x, y, width, height } = tmbGeo;
+
         // After changing monitors configuration, the thumbnail may be out of screen
         this._updateThisMonitor();
         const monitor = this._monitor;
@@ -746,14 +774,12 @@ const WindowThumbnail = GObject.registerClass({
     }
 
     _resize(direction) {
-        // maxScale to fit the screen
-        // const maxScale =
         switch (direction) {
         case Clutter.ScrollDirection.UP:
-            this._geometry.scale = Math.max(0.05, this._geometry.scale - 0.025);
+            this._geometry.scale = Math.min(this._maxScale, this._geometry.scale + 0.025);
             break;
         case Clutter.ScrollDirection.DOWN:
-            this._geometry.scale = Math.min(1, this._geometry.scale + 0.025);
+            this._geometry.scale = Math.max(0.05, this._geometry.scale - 0.025);
             break;
         default:
             return Clutter.EVENT_PROPAGATE;
@@ -768,11 +794,11 @@ const WindowThumbnail = GObject.registerClass({
     _changeOpacity(direction) {
         switch (direction) {
         case Clutter.ScrollDirection.UP:
-            this._clone.opacity = Math.min(255, this._clone.opacity - 24);
+            this._clone.opacity = Math.max(48, this._clone.opacity + 24);
             this._customOpacity = this._clone.opacity;
             break;
         case Clutter.ScrollDirection.DOWN:
-            this._clone.opacity = Math.max(48, this._clone.opacity + 24);
+            this._clone.opacity = Math.min(255, this._clone.opacity - 24);
             this._customOpacity = this._clone.opacity;
             break;
         default:
