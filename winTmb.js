@@ -499,6 +499,8 @@ const WindowThumbnail = GObject.registerClass({
         // Ensure the entire thumbnail will be visible on screen
         let { x, y } = tmbGeo;
         const { width, height } = tmbGeo;
+        // After changing monitors configuration, the thumbnail may be out of screen
+        this._updateThisMonitor();
         const monitor = this._monitor;
         x = Math.clamp(monitor.x, x, (monitor.x + monitor.width) - width);
         y = Math.clamp(monitor.y, y, (monitor.y + monitor.height) - height);
@@ -533,14 +535,16 @@ const WindowThumbnail = GObject.registerClass({
         return iconGeometry;
     }
 
+    _updateThisMonitor() {
+        this._monitor = this._getCurrentTmbMonitor();
+        this._geometry.monitorIndex = this._monitor.index;
+    }
+
     _getCurrentTmbMonitor() {
         const monitors = Main.layoutManager.monitors;
-        let monitor = null;
-
-        const monitorIndex = global.display.get_monitor_index_for_rect(this._geometry);
-        monitor = monitors[monitorIndex];
-
-        return monitor;
+        const index = global.display.get_monitor_index_for_rect(this._geometry);
+        // this function returns 0 if the rectangle is out of any screen
+        return monitors[index];
     }
 
     _endDrag() {
@@ -742,6 +746,8 @@ const WindowThumbnail = GObject.registerClass({
     }
 
     _resize(direction) {
+        // maxScale to fit the screen
+        // const maxScale =
         switch (direction) {
         case Clutter.ScrollDirection.UP:
             this._geometry.scale = Math.max(0.05, this._geometry.scale - 0.025);
