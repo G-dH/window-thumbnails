@@ -180,7 +180,7 @@ class WTMB {
         optionList.push(
             itemFactory.getRowWidget(
                 _('Thumbnail Opacity (%)'),
-                _('Adjusts the default thumbnail opacity. You can modify the opacity at any time using the Shift + Scroll shortcut while hovering the thumbnail'),
+                _('Adjusts the default thumbnail opacity. You can modify the opacity at any time using a shortcut (default Shift + Scroll) while hovering the thumbnail'),
                 itemFactory.newSpinButton(tmbOpacityAdjustment),
                 'defaultOpacity'
             )
@@ -547,7 +547,7 @@ class WTMB {
         optionList.push(itemFactory.getRowWidget(
             _('GNOME Extensions'),
             _('Rate and comment this extension on the GNOME Extensions site'),
-            itemFactory.newLinkButton('https://extensions.gnome.org/extension/')
+            itemFactory.newLinkButton('https://extensions.gnome.org/extension/6816/')
         ));
 
         optionList.push(itemFactory.getRowWidget(
