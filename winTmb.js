@@ -278,6 +278,9 @@ const WindowThumbnail = GObject.registerClass({
 
         this._addControls();
 
+        // "Remove" shadow box
+        this._updateCloneScale();
+
         Main.layoutManager.addChrome(this);
 
         // HOVER_SHOW_PREVIEW can be toggled by the user anytime
@@ -304,9 +307,6 @@ const WindowThumbnail = GObject.registerClass({
         } else {
             this._animateNewTmb();
         }
-
-        // "Remove" shadow box
-        this._updateCloneScale();
 
         this.connectObject('button-release-event', this._onBtnReleased.bind(this), this);
         this.connectObject('scroll-event', this._onScrollEvent.bind(this), this);
@@ -550,15 +550,17 @@ const WindowThumbnail = GObject.registerClass({
 
     _getTransitionGeometry() {
         // Compensate geometry for shadow box
-        const scale = this._clone.scale_x;
-        const offsetX = (this.width * scale - this.width) / 2;
-        const offsetY = (this.height * scale - this.height) / 2;
+        const scaleX = this._clone.scale_x;
+        const scaleY = this._clone.scale_y;
+
+        const offsetX = (this.width * scaleX - this.width) / 2;
+        const offsetY = (this.height * scaleY - this.height) / 2;
         const tmbGeo = this._geometry;
         const iconGeometry = new Mtk.Rectangle({
             x: Math.round(tmbGeo.x - offsetX),
             y: Math.round(tmbGeo.y - offsetY),
-            width: Math.round(tmbGeo.width * scale),
-            height: Math.round(tmbGeo.height * scale),
+            width: Math.round(tmbGeo.width * scaleX),
+            height: Math.round(tmbGeo.height * scaleY),
         });
         return iconGeometry;
     }
