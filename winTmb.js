@@ -594,7 +594,7 @@ const WindowThumbnail = GObject.registerClass({
         if (!this._getHover() || this._timeouts.show || this._tmbDestroyed)
             return;
 
-        global.display.set_cursor(Meta.Cursor.POINTING_HAND);
+        // global.display.set_cursor(Meta.Cursor.POINTING_HAND);
         this._closeButton.opacity = CLOSE_BTN_OPACITY;
 
         if (!(this.HOVER_SHOW_PREVIEW  || this.HOVER_HIDE_TMB) || Me.Util.isAltPressed())
