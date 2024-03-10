@@ -461,6 +461,7 @@ const WindowThumbnail = GObject.registerClass({
         // windowActor.size includes shadow box,
         // we need to get the original window size to calculate the scale
         // Also compensate for different aspect ratio of window with and without shadow
+        // All this only if windows are not maximized or full-screen
         const shadowSizeH = this._windowActor.width - this._winGeometry.width;
         const shadowSizeV = this._windowActor.height - this._winGeometry.height;
         let shadowRatioV = 1;
@@ -543,15 +544,17 @@ const WindowThumbnail = GObject.registerClass({
 
     _getTransitionGeometry() {
         // Compensate geometry for shadow box
-        const scale = this._clone.scale_x;
-        const offsetX = (this.width * scale - this.width) / 2;
-        const offsetY = (this.height * scale - this.height) / 2;
+        const scaleX = this._clone.scale_x;
+        const scaleY = this._clone.scale_y;
+
+        const offsetX = (this.width * scaleX - this.width) / 2;
+        const offsetY = (this.height * scaleY - this.height) / 2;
         const tmbGeo = this._geometry;
         const iconGeometry = new Meta.Rectangle({
             x: Math.round(tmbGeo.x - offsetX),
             y: Math.round(tmbGeo.y - offsetY),
-            width: Math.round(tmbGeo.width * scale),
-            height: Math.round(tmbGeo.height * scale),
+            width: Math.round(tmbGeo.width * scaleX),
+            height: Math.round(tmbGeo.height * scaleY),
         });
         return iconGeometry;
     }
