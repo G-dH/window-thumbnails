@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: window-thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 17:38+0100\n"
+"POT-Creation-Date: 2024-03-10 13:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,7 +111,7 @@ msgstr ""
 #: prefs.js:172
 msgid ""
 "Adjusts the default thumbnail opacity. You can modify the opacity at any "
-"time using the Shift + Scroll shortcut while hovering the thumbnail"
+"time using a shortcut (default Shift + Scroll) while hovering the thumbnail"
 msgstr ""
 
 #: prefs.js:187
@@ -352,7 +352,7 @@ msgid "Reset all options"
 msgstr ""
 
 #: prefs.js:515
-msgid "Set all options to default values."
+msgid "Reset all options to their default values"
 msgstr ""
 
 #: prefs.js:521
@@ -388,7 +388,7 @@ msgid "Buy Me a Coffee"
 msgstr ""
 
 #: prefs.js:550
-msgid "Enjoying my extensions? Consider supporting it by buying me a coffee!"
+msgid "Enjoying this extension? Consider supporting it by buying me a coffee!"
 msgstr ""
 
 #: winTmb.js:79
