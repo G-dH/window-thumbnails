@@ -329,7 +329,7 @@ const WindowThumbnail = GObject.registerClass({
         if (this._winPreview)
             this._destroyWindowPreview();
 
-        if (this._minimized) {
+        if (this._minimized && !this._sourceClosed) {
             // Hide the thumbnail so it will be invisible during transition animation
             this.hide();
             this._activateWinOnCurrentWs();
@@ -367,6 +367,7 @@ const WindowThumbnail = GObject.registerClass({
 
         // remove thumbnail content and hide thumbnail if its window is destroyed
         this._windowActor.connectObject('destroy', () => {
+            this._sourceClosed = true;
             this.remove();
         }, this);
 
