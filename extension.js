@@ -55,6 +55,9 @@ class WTMB {
             }
         );
 
+        // Restore thumbnails if needed
+        this._winTmb.restoreThumbnails();
+
         console.debug(`${this.metadata.name}: enabled`);
     }
 

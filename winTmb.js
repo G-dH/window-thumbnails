@@ -54,15 +54,27 @@ var WinTmb = class {
     destroy() {
         Main.overview.disconnectObject(this);
         // Remove thumbnails
-        this.removeAll();
+        // but keep information about the current state in the source windows
+        this.removeAll(true);
         // Remove global API
-        global.windowThumbnails = null;
+        delete global.windowThumbnails;
         Me = null;
         opt = null;
         _ = null;
     }
 
-    createThumbnail(metaWin, minimize = false) {
+    restoreThumbnails() {
+        // Restore thumbnails that were destroyed because of re-basing or re-enabling extensions during session
+        const windows = global.display.get_tab_list(Meta.WindowType.NORMAL, null);
+        for (let metaWin of windows) {
+            if (metaWin._thumbnailEnabled) {
+                const skipAnimation = true;
+                this.createThumbnail(metaWin, metaWin.minimized, skipAnimation);
+            }
+        }
+    }
+
+    createThumbnail(metaWin, minimize, skipAnimation) {
         metaWin = metaWin || this._getCurrentWindow();
         if (!metaWin) {
             console.error(`[${Me.metadata.name}] createThumbnail: Missing argument of type Meta.Window`);
@@ -99,6 +111,7 @@ var WinTmb = class {
         const thumbnail = new WindowThumbnail(metaWin, {
             yOffset,
             minimize,
+            skipAnimation,
         });
 
         this._windowThumbnails.push(thumbnail);
@@ -161,9 +174,9 @@ var WinTmb = class {
         }
     }
 
-    removeAll() {
+    removeAll(trackEnabled) {
         for (let i = this._windowThumbnails.length - 1; i > -1; i--)
-            this._windowThumbnails[i].remove();
+            this._windowThumbnails[i].remove(trackEnabled);
         this._windowThumbnails = [];
     }
 
@@ -242,6 +255,7 @@ const WindowThumbnail = GObject.registerClass({
 
         this._minimized = params.minimize;
         this._customOpacity = opt.DEFAULT_OPACITY;
+        this._skipAnimation = params.skipAnimation;
 
         this._scrollTime = 0;
         this._prevBtnPressTime = 0;
@@ -282,8 +296,8 @@ const WindowThumbnail = GObject.registerClass({
         this.HOVER_SHOW_PREVIEW = opt.HOVER_SHOW_PREVIEW;
         this.HOVER_HIDE_TMB = opt.HOVER_HIDE_TMB;
 
-        // Restore and adapt the previous thumbnail position and size if a thumbnail of the window existed during the current session
-        if (opt.REMEMBER_GEOMETRY && metaWin._thumbnailGeometry) {
+        if ((opt.REMEMBER_GEOMETRY && metaWin._thumbnailGeometry) || this._metaWin._thumbnailEnabled) {
+            // Restore and adapt the previous thumbnail position and size if a thumbnail of the window existed during the current session
             this._geometry = metaWin._thumbnailGeometry;
             this._fixGeometry(false);
 
@@ -296,7 +310,6 @@ const WindowThumbnail = GObject.registerClass({
 
         if (this._minimized) {
             this._applyGeometry();
-            this.opacity = 0;
             this._animateToMinimize();
         } else {
             this._animateNewTmb();
@@ -310,10 +323,11 @@ const WindowThumbnail = GObject.registerClass({
         this._updateSourceConnections();
         Main.layoutManager.connectObject('monitors-changed', () => this._onMonitorsChanged(), this);
 
+        this._metaWin._thumbnailEnabled = true;
         this.tmbRedrawDirection = true;
     }
 
-    remove() {
+    remove(trackEnabled) {
         if (this._tmbDestroyed)
             return;
         this._tmbDestroyed = true;
@@ -330,15 +344,22 @@ const WindowThumbnail = GObject.registerClass({
             this._destroyWindowPreview();
 
         if (this._minimized && !this._sourceClosed) {
-            // Hide the thumbnail so it will be invisible during transition animation
-            this.hide();
-            this._activateWinOnCurrentWs();
-            this._animateFromMinimize();
+            if (!trackEnabled) {
+                // Hide the thumbnail so it will be invisible during transition animation
+                this.hide();
+                this._activateWinOnCurrentWs();
+                this._animateFromMinimize();
+            } else {
+                this.emit('remove');
+            }
         } else {
             this.emit('remove');
         }
 
         this._metaWin._thumbnailGeometry = this._geometry;
+        // If all thumbnails are removed in disable, keep track of the existing thumbnails
+        if (!trackEnabled)
+            this._metaWin._thumbnailEnabled = false;
     }
 
     removeTimeouts() {
@@ -1035,10 +1056,13 @@ const WindowThumbnail = GObject.registerClass({
     }*/
 
     _animateNewTmb() {
-        const tmbGeo = this._geometry;
+        if (this._skipAnimation) {
+            this._fixGeometry();
+            return;
+        }
 
-        const { width, height } = tmbGeo;
-        const { x, y } = tmbGeo;
+        const tmbGeo = this._geometry;
+        const { x, y, width, height } = tmbGeo;
 
         this.x = this._winGeometry.x;
         this.y = this._winGeometry.y;
@@ -1052,6 +1076,11 @@ const WindowThumbnail = GObject.registerClass({
     }
 
     _animateToMinimize() {
+        if (this._skipAnimation && this._metaWin.minimized) {
+            this._fixGeometry();
+            return;
+        }
+
         // Animate the original window actor and then replace it with the thumbnail
         // The original actor is hidden when the animation completes
         this._metaWin._minimizeInProgress = true;
@@ -1059,6 +1088,7 @@ const WindowThumbnail = GObject.registerClass({
         // Removing transition also means completing (un)minimize
         actor.remove_all_transitions();
 
+        this.opacity = 0;
         let xDest, yDest, xScale, yScale;
         // get geometry compensated for box shadow
         const geometry = this._getTransitionGeometry();
