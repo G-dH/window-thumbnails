@@ -388,6 +388,7 @@ const WindowThumbnail = GObject.registerClass({
     _updateSourceConnections(disconnect = false) {
         this._windowActor.disconnectObject(this);
         this._metaWin.disconnectObject(this);
+        global.display.disconnectObject(this);
 
         if (disconnect)
             return;
@@ -404,6 +405,14 @@ const WindowThumbnail = GObject.registerClass({
                 if (!this._tmbDestroyed)
                     this.remove();
             }, this);
+        } else if (opt.HIDE_FOCUSED) {
+            global.display.connectObject('notify::focus-window',
+                () => {
+                    const focusWin = global.display.get_focus_window();
+                    this.visible = this._metaWin !== focusWin;
+                },
+                this
+            );
         }
     }
 

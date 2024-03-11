@@ -93,7 +93,8 @@ export default class WTMB extends ExtensionPreferences {
 
         optionList.push(
             itemFactory.getRowWidget(
-                _('Behavior')
+                /* _('Behavior')*/
+                ''
             )
         );
 
@@ -137,6 +138,15 @@ export default class WTMB extends ExtensionPreferences {
                 _('Adjusts the delay before the selected action is performed. This delay allows you to drag the thumbnail to another position before it is hidden or a full-size preview is created'),
                 itemFactory.newSpinButton(hoverDelayAdjustment),
                 'mouseHoverDelay'
+            )
+        );
+
+        optionList.push(
+            itemFactory.getRowWidget(
+                _('Hide On Source Window Focus'),
+                _('Hide thumbnail if its source window gets focus'),
+                itemFactory.newSwitch(),
+                'hideFocused'
             )
         );
 
@@ -197,7 +207,7 @@ export default class WTMB extends ExtensionPreferences {
 
         optionList.push(
             itemFactory.getRowWidget(
-                _('Thumbnail scale (%)'),
+                _('Thumbnail Scale (%)'),
                 _('The size of the thumbnail in the selected axis relative to the screen width or height (set below)'),
                 itemFactory.newSpinButton(tmbScaleAdjustment),
                 'defaultScale'

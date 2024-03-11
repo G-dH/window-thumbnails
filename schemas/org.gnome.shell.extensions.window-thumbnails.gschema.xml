@@ -38,6 +38,9 @@
     <key name='show-close-button' type='b'>
       <default>true</default>
     </key>
+    <key name='hide-focused' type='b'>
+      <default>true</default>
+    </key>
 
     <key name='create-tmb-shortcut' type='as'>
       <default><![CDATA[['<Super>t']]]></default>
