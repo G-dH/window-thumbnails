@@ -103,7 +103,7 @@ var WinTmb = class {
             if (tmb._metaWin === metaWin)
                 tmb.remove();
             else if (!tmb._tmbDestroyed && tmb._monitor === monitor && tmb.y < yOffset)
-                yOffset = tmb.y;
+                yOffset = tmb.y - 6;
         }
 
         yOffset = monitor.height - yOffset;
