@@ -1,6 +1,5 @@
 # WTMB (Window Thumbnails)
 A GNOME Shell extension that allows the creation of scaled-down window clones for use as Picture-in-Picture (PIP) thumbnails.
-Window thumbnails can be user 
 
 WTMB is supported by the V-Shell, AATWS and CHC-E extensions which allows you to create window thumbnails using their controls.
 
