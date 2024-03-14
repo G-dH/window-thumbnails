@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: window-thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 17:38+0100\n"
-"PO-Revision-Date: 2024-03-09 13:34+0100\n"
+"POT-Creation-Date: 2024-03-12 11:57+0100\n"
+"PO-Revision-Date: 2024-03-14 12:54+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.4.2\n"
 
-#: prefs.js:27 prefs.js:273
+#: prefs.js:27 prefs.js:283
 msgid "Geometry"
 msgstr "Afmetingen"
 
-#: prefs.js:32 prefs.js:96
+#: prefs.js:32
 msgid "Behavior"
 msgstr "Gedrag"
 
-#: prefs.js:37 prefs.js:315
+#: prefs.js:37 prefs.js:325
 msgid "Controls"
 msgstr "Bediening"
 
@@ -42,11 +42,11 @@ msgstr "Muis"
 msgid "About"
 msgstr "Over"
 
-#: prefs.js:102
+#: prefs.js:103
 msgid "Maximum Number Of Thumbnails"
 msgstr "Maximumaantal miniaturen"
 
-#: prefs.js:103
+#: prefs.js:104
 msgid ""
 "Limit the number of thumbnails to one if you do not need more and want to "
 "simplify control. In this case, creating a new thumbnail removes the "
@@ -58,19 +58,19 @@ msgstr ""
 "nieuwe miniaturen de reeds bestaande. Let op: dit is niet van toepassing op "
 "de actie ‘Minimaliseren naar miniatuur’."
 
-#: prefs.js:107
+#: prefs.js:108
 msgid "Unlimited"
 msgstr "Onbeperkt"
 
-#: prefs.js:108
+#: prefs.js:109
 msgid "Only One"
 msgstr "Eén"
 
-#: prefs.js:115
+#: prefs.js:116
 msgid "Mouse Hover Action"
 msgstr "Actie na aanwijzen met muis"
 
-#: prefs.js:116
+#: prefs.js:117
 msgid ""
 "Choose how the thumbnail should behave when hovered by the mouse pointer. "
 "The \"Show Full Size Preview\" option can also be toggled by right-clicking "
@@ -82,23 +82,23 @@ msgstr ""
 "geactiveerd door met de rechtermuisknop te klikken. Als u geen actie wilt "
 "uitvoeren, houd dan de Alt-toets ingedrukt terwijl u de miniatuur aanwijst."
 
-#: prefs.js:120
+#: prefs.js:121
 msgid "No Action"
 msgstr "Geen actie"
 
-#: prefs.js:121
+#: prefs.js:122
 msgid "Show Full Size Preview"
 msgstr "Volledig voorvertonen"
 
-#: prefs.js:122
+#: prefs.js:123
 msgid "Hide"
 msgstr "Verbergen"
 
-#: prefs.js:136
+#: prefs.js:137
 msgid "Mouse Hover Action Delay"
 msgstr "Wachttijd bij uitvoeren van actie"
 
-#: prefs.js:137
+#: prefs.js:138
 msgid ""
 "Adjusts the delay before the selected action is performed. This delay allows "
 "you to drag the thumbnail to another position before it is hidden or a full-"
@@ -108,36 +108,44 @@ msgstr ""
 "Door een wachttijd in te stellen kunt u de miniatuur verplaatsen voordat er "
 "een actie wordt uitgevoerd."
 
-#: prefs.js:155
+#: prefs.js:146
+msgid "Hide On Source Window Focus"
+msgstr "Verbergen na activeren van bijbehorend venster"
+
+#: prefs.js:147
+msgid "Hide thumbnail if its source window gets focus"
+msgstr "Verberg de miniatuur als het bijbehorende venster geactiveerd wordt"
+
+#: prefs.js:165
 msgid "Animation Time (ms)"
 msgstr "Effectduur (in ms)"
 
-#: prefs.js:156
+#: prefs.js:166
 msgid "Adjusts speed of transition animations"
 msgstr "Pas de snelheid van overgangseffecten aan."
 
-#: prefs.js:171
-msgid "Thumbnail Opacity (%)"
-msgstr "Doorzichtigheid van miniaturen (in %)"
+#: prefs.js:181
+msgid "Thumbnail Opacity"
+msgstr "Doorzichtigheid van miniaturen"
 
-#: prefs.js:172
+#: prefs.js:182
 msgid ""
 "Adjusts the default thumbnail opacity. You can modify the opacity at any "
-"time using the Shift + Scroll shortcut while hovering the thumbnail"
+"time using a shortcut (default Shift + Scroll) while hovering the thumbnail"
 msgstr ""
 "Pas de doorzichtigheid van miniaturen aan. U kunt de doorzichtigheid tevens "
 "per miniatuur instellen door de cursor op de miniatuur te plaatsen en Shift "
-"in te drukken terwijl u scrollt."
+"in te drukken terwijl u scrolt."
 
-#: prefs.js:187
+#: prefs.js:197
 msgid "Default Size"
 msgstr "Standaardafmetingen"
 
-#: prefs.js:200
-msgid "Thumbnail scale (%)"
-msgstr "Miniatuurgrootte (in %)"
+#: prefs.js:210
+msgid "Thumbnail Scale"
+msgstr "Miniatuurafmetingen"
 
-#: prefs.js:201
+#: prefs.js:211
 msgid ""
 "The size of the thumbnail in the selected axis relative to the screen width "
 "or height (set below)"
@@ -145,11 +153,11 @@ msgstr ""
 "De grootte van miniaturen op de gekozen is ten opzichte van de schermbreedte "
 "of -hoogte (stel hieronder in)."
 
-#: prefs.js:209
+#: prefs.js:219
 msgid "Scale Axis"
 msgstr "Asgrootte"
 
-#: prefs.js:210
+#: prefs.js:220
 msgid ""
 "Choose whether the scale should be applied to the height or width of the "
 "thumbnail. The original aspect ratio will be preserved"
@@ -157,23 +165,23 @@ msgstr ""
 "Geef aan of de grootte dient te worden toegepast op de hoogte of breedte van "
 "de miniatuur. De oorspronkelijke beeldverhouding blijft intact."
 
-#: prefs.js:214
+#: prefs.js:224
 msgid "Height"
 msgstr "Hoogte"
 
-#: prefs.js:215
+#: prefs.js:225
 msgid "Width"
 msgstr "Breedte"
 
-#: prefs.js:222
+#: prefs.js:232
 msgid "Default Position"
 msgstr "Standaardlocatie"
 
-#: prefs.js:228
+#: prefs.js:238
 msgid "Custom Position"
 msgstr "Zelfgekozen locatie"
 
-#: prefs.js:229
+#: prefs.js:239
 msgid ""
 "Set a custom default position for the new thumbnail on the screen, or allow "
 "it to display at the mouse pointer position. You can then drag and drop the "
@@ -183,29 +191,35 @@ msgstr ""
 "cursor of op een zelfgekozen locatie. U kunt miniaturen te allen tijde "
 "verplaatsen."
 
-#: prefs.js:244
-#, javascript-format
-msgid "Horizontal Position (% of screen width from left)"
-msgstr "Horizontale positie (% van schermbreedte vanaf linkerkant)"
+#: prefs.js:254
+msgid "Horizontal Position"
+msgstr "Horizontale locatie"
 
-#: prefs.js:245
-msgid "Adjusts horizontal position of the new thumbnail"
-msgstr "Pas de horizontale locatie van nieuwe miniaturen aan."
+#: prefs.js:255
+msgid ""
+"Adjusts the horizontal position of the new thumbnail as a percentage of the "
+"screen width from the left"
+msgstr ""
+"Pas de horizontale locatie van nieuwe miniaturen aan, gerekend in procenten "
+"vanaf de linkerkant"
 
-#: prefs.js:262
-#, javascript-format
-msgid "Vertical Position (% of screen height from top)"
-msgstr "Verticale locatie (% van schermhoogte vanaf de bovenkant)"
+#: prefs.js:272
+msgid "Vertical Position"
+msgstr "Verticale locatie"
 
-#: prefs.js:263
-msgid "Adjusts vertical position of the new thumbnail"
-msgstr "Pas de verticale locatie van nieuwe miniaturen aan."
+#: prefs.js:273
+msgid ""
+"Adjusts vertical position of the new thumbnail as a percentage of the screen "
+"height from the top"
+msgstr ""
+"Pas de verticale locatie van nieuwe miniaturen aan, gerekend is procenten "
+"vanaf de bovenkant"
 
-#: prefs.js:279
+#: prefs.js:289
 msgid "Remember Geometry"
 msgstr "Afmetingen onthouden"
 
-#: prefs.js:280
+#: prefs.js:290
 msgid ""
 "Enable this option to remember the geometry, restoring the size and position "
 "when creating a thumbnail with the same source window as a previously "
@@ -214,151 +228,151 @@ msgstr ""
 "Schakel deze optie in om de afmetingen te onthouden, zodat de grootte en "
 "positie van nieuwe miniaturen gelijk is."
 
-#: prefs.js:294
+#: prefs.js:304
 msgid "Buttons"
 msgstr "Knoppen"
 
-#: prefs.js:300
+#: prefs.js:310
 msgid "Show Close/Unminimize Button"
 msgstr "Sluiten-/Herstellenknop tonen"
 
-#: prefs.js:301
+#: prefs.js:311
 msgid ""
 "Show the Close/Unminimize Button, which allows you to remove the window "
 "thumbnail"
 msgstr ""
 "Toon de sluiten-/herstellenknop, waarmee de miniatuur kan worden weggehaald"
 
-#: prefs.js:320 prefs.js:332
+#: prefs.js:330 prefs.js:342
 msgid "Disable"
 msgstr "Uitschakelen"
 
-#: prefs.js:321
+#: prefs.js:331
 msgid "Activate Source Window"
 msgstr "Bijbehorend venster activeren"
 
-#: prefs.js:322
+#: prefs.js:332
 msgid "Activate Source On Current Workspace"
 msgstr "Bijbehorend venster op huidig werkblad activeren"
 
-#: prefs.js:323
+#: prefs.js:333
 msgid "Remove Thumbnail"
 msgstr "Miniatuur sluiten"
 
-#: prefs.js:324
+#: prefs.js:334
 msgid "Close Source Window"
 msgstr "Bijbehorend venster sluiten"
 
-#: prefs.js:325
+#: prefs.js:335
 msgid "Toggle Window Preview"
 msgstr "Venster voorvertonen"
 
-#: prefs.js:326
+#: prefs.js:336
 msgid "Toggle Hide On Hover"
 msgstr "Verbergen na aanwijzen"
 
-#: prefs.js:327
+#: prefs.js:337
 msgid "Reset Thumbnail Scale"
 msgstr "Miniatuurafmetingen herstellen"
 
-#: prefs.js:328
+#: prefs.js:338
 msgid "Open WT Preferences"
 msgstr "WT-voorkeuren openen"
 
-#: prefs.js:333
+#: prefs.js:343
 msgid "Resize"
 msgstr "Grootte aanpassen"
 
-#: prefs.js:334
+#: prefs.js:344
 msgid "Switch Source Window"
 msgstr "Ander venster koppelen"
 
-#: prefs.js:335
+#: prefs.js:345
 msgid "Change Opacity"
 msgstr "Doorzichtigheid aanpassen"
 
-#: prefs.js:340
+#: prefs.js:350
 msgid "Double Click Action"
 msgstr "Dubbelklikactie"
 
-#: prefs.js:350
+#: prefs.js:360
 msgid "Middle Button Action"
 msgstr "Middelklikactie"
 
-#: prefs.js:360
+#: prefs.js:370
 msgid "Secondary Button Action"
 msgstr "Rechtermuisklikactie"
 
-#: prefs.js:370
+#: prefs.js:380
 msgid "Ctrl + Primary Button Action"
 msgstr "Ctrl+linkermuisklik"
 
-#: prefs.js:380
+#: prefs.js:390
 msgid "Ctrl + Secondary Button Action"
 msgstr "Ctrl+rechtermuisklik"
 
-#: prefs.js:390
+#: prefs.js:400
 msgid "Scroll Wheel Action"
 msgstr "Scrolwielactie"
 
-#: prefs.js:400
+#: prefs.js:410
 msgid "Ctrl + Scroll Wheel Action"
 msgstr "Ctrl+scrolwielactie"
 
-#: prefs.js:410
+#: prefs.js:420
 msgid "Shift + Scroll Wheel Action"
 msgstr "Shift+scrolwielactie"
 
-#: prefs.js:426
+#: prefs.js:436
 msgid "Keyboard Shortcuts"
 msgstr "Sneltoetsen"
 
-#: prefs.js:432
+#: prefs.js:442
 msgid "Create Window Thumbnail"
 msgstr "Vensterminiatuur aanmaken"
 
-#: prefs.js:433
+#: prefs.js:443
 msgid "Creates a new live thumbnail of the currently focused window"
 msgstr "Maak een nieuwe live-miniatuur aan van het gefocuste venster."
 
-#: prefs.js:441
+#: prefs.js:451
 msgid "Minimize To Thumbnail"
 msgstr "Minimaliseren naar miniatuur"
 
-#: prefs.js:442
+#: prefs.js:452
 msgid ""
 "Minimizes the currently focused window to the newly created live thumbnail"
 msgstr "Minimaliseer het gefocuste venster naar een nieuwe live-miniatuur."
 
-#: prefs.js:450
+#: prefs.js:460
 msgid "Remove Last Thumbnail"
 msgstr "Vorige miniatuur weghalen"
 
-#: prefs.js:451
+#: prefs.js:461
 msgid "Removes the last-created window thumbnail"
 msgstr "Haal de recentst aangemaakte miniatuur weg."
 
-#: prefs.js:459
+#: prefs.js:469
 msgid "Remove All Thumbnails"
 msgstr "Alle miniaturen weghalen"
 
-#: prefs.js:460
+#: prefs.js:470
 msgid "Removes all window thumbnails"
 msgstr "Haal alle miniaturen weg."
 
-#: prefs.js:468
+#: prefs.js:478
 msgid "Toggle Thumbnails Visibility"
 msgstr "Miniaturen tonen/verbergen"
 
-#: prefs.js:469
+#: prefs.js:479
 msgid "Temporarily hides all created thumbnails"
 msgstr "Verbergt of toont alle aangemaakte miniaturen"
 
-#: prefs.js:477
+#: prefs.js:487
 msgid "Switch Source Window To Next"
 msgstr "Volgend bijbehorend venster kiezen"
 
-#: prefs.js:478 prefs.js:487
+#: prefs.js:488 prefs.js:497
 msgid ""
 "Replaces the source window of a thumbnail. This action applies to the last "
 "thumbnail that was not created as \"Minimize To Thumbnail\""
@@ -367,63 +381,63 @@ msgstr ""
 "van toepassing op de recentste miniatuur die niet is aangemaakt met behulp "
 "van ‘Minimaliseren naar miniatuur’."
 
-#: prefs.js:486
+#: prefs.js:496
 msgid "Switch Source Window To Previous"
 msgstr "Vorig bijbehorend venster kiezen"
 
-#: prefs.js:508
+#: prefs.js:518
 msgid "Version"
 msgstr "Versie"
 
-#: prefs.js:514
+#: prefs.js:524
 msgid "Reset all options"
 msgstr "Standaardwaarden herstellen"
 
-#: prefs.js:515
-msgid "Set all options to default values."
-msgstr "Herstel alle standaardvoorkeuren."
+#: prefs.js:525
+msgid "Reset all options to their default values"
+msgstr "Herstel alle standaardvoorkeuren"
 
-#: prefs.js:521
+#: prefs.js:531
 msgid "Links"
 msgstr "Links"
 
-#: prefs.js:525
+#: prefs.js:535
 msgid "Homepage"
 msgstr "Website"
 
-#: prefs.js:526
+#: prefs.js:536
 msgid "Source code and more info about this extension"
 msgstr "Broncode en meer informatie over deze uitbreiding"
 
-#: prefs.js:537
+#: prefs.js:547
 msgid "GNOME Extensions"
 msgstr "GNOME-uitbreidingen"
 
-#: prefs.js:538
+#: prefs.js:548
 msgid "Rate and comment this extension on the GNOME Extensions site"
 msgstr ""
 "Beoordeel deze uitbreiding op de GNOME-uitbreidingensite en laat een reactie "
 "achter."
 
-#: prefs.js:543
+#: prefs.js:553
 msgid "Report a bug or suggest new feature"
 msgstr "Bug melden of idee delen"
 
-#: prefs.js:544
+#: prefs.js:554
 msgid "Help me to help you!"
 msgstr "Help mij jou te helpen!"
 
-#: prefs.js:549
+#: prefs.js:559
 msgid "Buy Me a Coffee"
 msgstr "Trakteer me op koffie"
 
-#: prefs.js:550
-msgid "Enjoying my extensions? Consider supporting it by buying me a coffee!"
+#: prefs.js:560
+msgid "Enjoying this extension? Consider supporting it by buying me a coffee!"
 msgstr ""
-"Gebruikt u mijn uitbreidingen graag? Overweeg dan om me te trakteren op een "
+"Gebruikt u deze uitbreiding graag? Overweeg dan om me te trakteren op een "
 "kopje koffie!"
 
-#: winTmb.js:79
+#: winTmb.js:91
 msgid "This window cannot be minimized"
 msgstr "Dit venster kan niet worden geminimaliseerd"
 
@@ -467,3 +481,14 @@ msgstr "Huidige voorkeuren bewaren in dit profiel"
 #: optionsFactory.js:510
 msgid "Disabled"
 msgstr "Uitgeschakeld"
+
+#~ msgid "Thumbnail scale (%)"
+#~ msgstr "Miniatuurgrootte (in %)"
+
+#, javascript-format
+#~ msgid "Horizontal Position (% of screen width from left)"
+#~ msgstr "Horizontale positie (% van schermbreedte vanaf linkerkant)"
+
+#, javascript-format
+#~ msgid "Vertical Position (% of screen height from top)"
+#~ msgstr "Verticale locatie (% van schermhoogte vanaf de bovenkant)"
