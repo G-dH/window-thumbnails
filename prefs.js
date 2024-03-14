@@ -196,6 +196,15 @@ class WTMB {
             )
         );
 
+        optionList.push(
+            itemFactory.getRowWidget(
+                _('Keep Thumbnails Visible In Fullscreen Mode'),
+                _('In fullscreen mode, GNOME Shell bypasses the compositor to improve the performance of fullscreen apps like games, which results in the disappearance of the window thumbnails'),
+                itemFactory.newSwitch(),
+                'disableMetaUnredirection'
+            )
+        );
+
         return optionList;
     }
     // -----------------------------------------------------

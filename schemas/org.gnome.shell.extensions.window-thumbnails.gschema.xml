@@ -41,6 +41,9 @@
     <key name='hide-focused' type='b'>
       <default>false</default>
     </key>
+    <key name='disable-meta-unredirection' type='b'>
+      <default>false</default>
+    </key>
 
     <key name='create-tmb-shortcut' type='as'>
       <default><![CDATA[['<Super>t']]]></default>
