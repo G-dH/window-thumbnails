@@ -93,7 +93,8 @@ export default class WTMB extends ExtensionPreferences {
 
         optionList.push(
             itemFactory.getRowWidget(
-                _('Behavior')
+                /* _('Behavior')*/
+                ''
             )
         );
 
@@ -140,6 +141,15 @@ export default class WTMB extends ExtensionPreferences {
             )
         );
 
+        optionList.push(
+            itemFactory.getRowWidget(
+                _('Hide On Source Window Focus'),
+                _('Hide thumbnail if its source window gets focus'),
+                itemFactory.newSwitch(),
+                'hideFocused'
+            )
+        );
+
         let animationTimeAdjustment = new Gtk.Adjustment({
             lower: 0,
             upper: 1000,
@@ -168,7 +178,7 @@ export default class WTMB extends ExtensionPreferences {
 
         optionList.push(
             itemFactory.getRowWidget(
-                _('Thumbnail Opacity (%)'),
+                _('Thumbnail Opacity'),
                 _('Adjusts the default thumbnail opacity. You can modify the opacity at any time using a shortcut (default Shift + Scroll) while hovering the thumbnail'),
                 itemFactory.newSpinButton(tmbOpacityAdjustment),
                 'defaultOpacity'
@@ -197,7 +207,7 @@ export default class WTMB extends ExtensionPreferences {
 
         optionList.push(
             itemFactory.getRowWidget(
-                _('Thumbnail scale (%)'),
+                _('Thumbnail Scale'),
                 _('The size of the thumbnail in the selected axis relative to the screen width or height (set below)'),
                 itemFactory.newSpinButton(tmbScaleAdjustment),
                 'defaultScale'
@@ -241,8 +251,8 @@ export default class WTMB extends ExtensionPreferences {
 
         optionList.push(
             itemFactory.getRowWidget(
-                _('Horizontal Position (% of screen width from left)'),
-                _('Adjusts horizontal position of the new thumbnail'),
+                _('Horizontal Position'),
+                _('Adjusts the horizontal position of the new thumbnail as a percentage of the screen width from the left'),
                 itemFactory.newScale(horizontalPositionAdjustment),
                 'horizontalPosition',
                 null,
@@ -259,8 +269,8 @@ export default class WTMB extends ExtensionPreferences {
 
         optionList.push(
             itemFactory.getRowWidget(
-                _('Vertical Position (% of screen height from top)'),
-                _('Adjusts vertical position of the new thumbnail'),
+                _('Vertical Position'),
+                _('Adjusts vertical position of the new thumbnail as a percentage of the screen height from the top'),
                 itemFactory.newScale(verticalPositionAdjustment),
                 'verticalPosition',
                 null,

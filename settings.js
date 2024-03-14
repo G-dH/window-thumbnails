@@ -48,6 +48,7 @@ export const Options = class {
             animationTime:             ['int',  'animation-time'],
             rememberGeometry:          ['boolean',  'remember-geometry'],
             showCloseButton:           ['boolean',  'show-close-button'],
+            hideFocused:               ['boolean',  'hide-focused'],
 
             createTmbShortcut:         ['strv', 'create-tmb-shortcut'],
             minimizeToTmbShortcut:     ['strv', 'minimize-to-tmb-shortcut'],
@@ -148,5 +149,6 @@ export const Options = class {
         this.ANIMATION_TIME = this.get('animationTime');
         this.REMEMBER_GEOMETRY = this.get('rememberGeometry');
         this.SHOW_CLOSE_BUTTON = this.get('showCloseButton');
+        this.HIDE_FOCUSED = this.get('hideFocused');
     }
 };
