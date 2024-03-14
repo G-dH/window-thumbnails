@@ -62,6 +62,8 @@ export const WinTmb = class {
         // Remove thumbnails
         // but keep information about the current state in the source windows
         this.removeAll(true);
+        // Restore Meta.display redirection
+        this._enableRedirection();
         // Remove global API
         delete global.windowThumbnails;
         Me = null;
@@ -121,13 +123,29 @@ export const WinTmb = class {
         });
 
         this._windowThumbnails.push(thumbnail);
+
+        // Disable the compositor redirection if needed
+        if (opt.DISABLE_UNREDIRECTION && !this._redirectionDisabled) {
+            Meta.disable_unredirect_for_display(global.display);
+            this._redirectionDisabled = true;
+        }
+
         thumbnail.connect('remove', tmb => {
             this._windowThumbnails.splice(this._windowThumbnails.indexOf(tmb), 1);
             tmb.removeTimeouts();
             tmb.destroy();
+            if (this._windowThumbnails.length === 0)
+                this._enableRedirection();
         });
 
         return thumbnail;
+    }
+
+    _enableRedirection() {
+        if (this._redirectionDisabled) {
+            Meta.enable_unredirect_for_display(global.display);
+            this._redirectionDisabled = false;
+        }
     }
 
     _getCurrentWindow() {
