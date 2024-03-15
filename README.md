@@ -9,18 +9,20 @@ WTMB is supported by the V-Shell, AATWS and CHC-E extensions which allows you to
 - Minimize windows to thumbnails
 - Optional full size preview on hover
 - Optional hide on hover
-- Custom default scale, position and opacity
-- Resizable on the fly
+- Custom default scale, position and opacity, animation speed
+- Resizable by scrolling
 - Fully customizable mouse and keyboard control
 - An unlimited number or a single thumbnail
 - Windows can remember position nad size of their thumbnail after the thumbnail was removed so the thumbnail can be restored later
+- Multi-monitor support
+- Custom keyboard shortcuts
 
 
 [<img alt="" height="100" src="https://raw.githubusercontent.com/andyholmes/gnome-shell-extensions-badge/master/get-it-on-ego.svg?sanitize=true">](https://extensions.gnome.org/extension/6816/)
 
 
 ## Installation
-### Installation from extensions.gnome.org (not yet ready)
+### Installation from extensions.gnome.org
 The easiest way to install WTMB: go to [extensions.gnome.org](https://extensions.gnome.org/extension/6816/) and toggle the switch. This installation also gives you automatic updates in the future.
 
 ### Installation from GitHub repository
