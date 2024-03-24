@@ -9,7 +9,7 @@
 
 'use strict';
 
-const { GLib } = imports.gi;
+const { GLib, Gio } = imports.gi;
 
 var Options = class {
     constructor(me) {
@@ -60,7 +60,7 @@ var Options = class {
             switchSourcePrevShortcut:  ['strv', 'switch-source-prev-shortcut'],
 
             doubleClickAction:         ['int', 'double-click-action'],
-            midBtnAction:           ['int', 'middle-btn-action'],
+            midBtnAction:              ['int', 'middle-btn-action'],
             secBtnAction:              ['int', 'sec-btn-action'],
             ctrlPrimBtnAction:         ['int', 'ctrl-prim-btn-action'],
             ctrlSecBtnAction:          ['int', 'ctrl-sec-btn-action'],
@@ -71,7 +71,30 @@ var Options = class {
 
         this.cachedOptions = {};
 
+        try {
+            this._migrateSettingsToFixedSchemaPath();
+        } catch {
+            console.error('Migration of the schema failed');
+        }
+
         this._setOptionConstants();
+    }
+
+    _migrateSettingsToFixedSchemaPath() {
+        if (!this.Me.extension || this._gSettings.get_boolean('schema-migrated'))
+            return;
+
+        const oldSettings = this._getOldSettings();
+        Object.keys(this.options).forEach(option => {
+            const value = this.get(option, false, oldSettings);
+            if (value !== this.getDefault(option))
+                this.set(option, value);
+        });
+
+        this._gSettings.set_boolean('schema-migrated', true);
+        oldSettings.list_keys().forEach(
+            key => oldSettings.reset(key)
+        );
     }
 
     _updateCachedSettings(/* settings, key */) {
@@ -79,19 +102,15 @@ var Options = class {
         this._setOptionConstants();
     }
 
-    get(option, updateCache = false) {
+    get(option, updateCache = false, customSettings) {
+        // customSettings is temporary solution for schema path migration
+        const gSettings = customSettings || this._gSettings;
+
         if (this.options[option] === undefined)
-            console.log(`[${this.Me.metadata.name}]: Error: Option "${option}" not found`);
+            console.log(`[${this.Me.metadata.name}] Error: Option "${option}" not found`);
 
         if (updateCache || this.cachedOptions[option] === undefined) {
-            const [, key, settings] = this.options[option];
-            let gSettings;
-            if (settings !== undefined)
-                gSettings = settings();
-            else
-                gSettings = this._gSettings;
-
-
+            let [, key] = this.options[option];
             this.cachedOptions[option] = gSettings.get_value(key).deep_unpack();
         }
 
@@ -152,5 +171,35 @@ var Options = class {
         this.SHOW_CLOSE_BUTTON = this.get('showCloseButton');
         this.HIDE_FOCUSED = this.get('hideFocused');
         this.DISABLE_UNREDIRECTION = this.get('disableMetaUnredirection');
+    }
+
+    // Allows connection to the previous settings path with a typo so the settings can be migrated to the fixed path
+    // Will be deleted in the next version
+    _getOldSettings() {
+        const schema = 'org.gnome.shell.extensions.window-thumbnails-old';
+        const path = '/org/gnome/shell/extensions/window-thumnails/';
+        const schemaDir = this.Me.extension.dir.get_child('schemas');
+        let schemaSource;
+        if (schemaDir.query_exists(null)) {
+            schemaSource = Gio.SettingsSchemaSource.new_from_directory(
+                schemaDir.get_path(),
+                Gio.SettingsSchemaSource.get_default(),
+                false
+            );
+        } else {
+            console.error('Source schema not found');
+            return null;
+        }
+
+        const schemaObj = schemaSource.lookup(schema, true);
+        if (!schemaObj) {
+            log(
+                `Old schema ${schema} could not be found for extension ${
+                    this.Me.metadata.uuid}. Please check your installation.`
+            );
+            return null;
+        }
+
+        return new Gio.Settings({ settings_schema: schemaObj, path });
     }
 };

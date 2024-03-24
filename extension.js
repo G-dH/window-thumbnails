@@ -26,7 +26,7 @@ function init() {
 class WTMB {
     enable() {
         const Me = {};
-
+        Me.extension = MyExtension;
         this.metadata = MyExtension.metadata;
         Me.metadata = MyExtension.metadata;
         Me.gSettings = ExtensionUtils.getSettings(Me.metadata['settings-schema']);
