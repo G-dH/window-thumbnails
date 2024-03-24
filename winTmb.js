@@ -314,7 +314,7 @@ const WindowThumbnail = GObject.registerClass({
         this.HOVER_SHOW_PREVIEW = opt.HOVER_SHOW_PREVIEW;
         this.HOVER_HIDE_TMB = opt.HOVER_HIDE_TMB;
 
-        if ((opt.REMEMBER_GEOMETRY && metaWin._thumbnailGeometry) || this._metaWin._thumbnailEnabled) {
+        if ((opt.REMEMBER_GEOMETRY && metaWin._thumbnailGeometry) || (this._metaWin._thumbnailEnabled && metaWin._thumbnailGeometry)) {
             // Restore and adapt the previous thumbnail position and size if a thumbnail of the window existed during the current session
             this._geometry = metaWin._thumbnailGeometry;
             this._fixGeometry(false);
@@ -800,6 +800,11 @@ const WindowThumbnail = GObject.registerClass({
 
         if (metaWin === this._metaWin)
             return;
+
+        // move status and geometry to the new source window
+        this._metaWin._thumbnailEnabled = false;
+        metaWin._thumbnailEnabled = true;
+        metaWin._thumbnailGeometry = this._geometry;
 
         const disconnect = true;
         this._updateSourceConnections(disconnect);
