@@ -1,7 +1,106 @@
 <?xml version='1.0' encoding='utf-8'?>
 
 <schemalist>
-  <schema path='/org/gnome/shell/extensions/window-thumnails/' id='org.gnome.shell.extensions.window-thumbnails'>
+  <schema path='/org/gnome/shell/extensions/window-thumbnails/' id='org.gnome.shell.extensions.window-thumbnails'>
+    <key name='limit-number' type='i'>
+      <default>0</default>
+    </key>
+    <key name='default-scale' type='i'>
+      <default>20</default>
+    </key>
+    <key name='default-opacity' type='i'>
+      <default>100</default>
+    </key>
+    <key name='scale-axis' type='i'>
+      <default>0</default>
+    </key>
+    <key name='mouse-hover-action' type='i'>
+      <default>0</default>
+    </key>
+    <key name='mouse-hover-delay' type='i'>
+      <default>400</default>
+    </key>
+    <key name='animation-time' type='i'>
+      <default>400</default>
+    </key>
+    <key name='position-custom' type='b'>
+      <default>true</default>
+    </key>
+    <key name='horizontal-position' type='i'>
+      <default>100</default>
+    </key>
+    <key name='vertical-position' type='i'>
+      <default>100</default>
+    </key>
+    <key name='remember-geometry' type='b'>
+      <default>true</default>
+    </key>
+    <key name='show-close-button' type='b'>
+      <default>true</default>
+    </key>
+    <key name='hide-focused' type='b'>
+      <default>false</default>
+    </key>
+    <key name='disable-meta-unredirection' type='b'>
+      <default>false</default>
+    </key>
+
+    <key name='create-tmb-shortcut' type='as'>
+      <default><![CDATA[['<Super>t']]]></default>
+    </key>
+    <key name='minimize-to-tmb-shortcut' type='as'>
+      <default><![CDATA[['']]]></default>
+    </key>
+    <key name='remove-last-tmb-shortcut' type='as'>
+      <default><![CDATA[['']]]></default>
+    </key>
+    <key name='remove-all-tmb-shortcut' type='as'>
+      <default><![CDATA[['']]]></default>
+    </key>
+    <key name='toggle-visibility-shortcut' type='as'>
+      <default><![CDATA[['']]]></default>
+    </key>
+    <key name='switch-source-next-shortcut' type='as'>
+      <default><![CDATA[['']]]></default>
+    </key>
+    <key name='switch-source-prev-shortcut' type='as'>
+      <default><![CDATA[['']]]></default>
+    </key>
+
+    <key name='double-click-action' type='i'>
+      <default>1</default>
+    </key>
+    <key name='middle-btn-action' type='i'>
+      <default>3</default>
+    </key>
+    <key name='sec-btn-action' type='i'>
+      <default>5</default>
+    </key>
+    <key name='ctrl-prim-btn-action' type='i'>
+      <default>2</default>
+    </key>
+    <key name='ctrl-sec-btn-action' type='i'>
+      <default>8</default>
+    </key>
+    <key name='scroll-action' type='i'>
+      <default>1</default>
+    </key>
+    <key name='ctrl-scroll-action' type='i'>
+      <default>2</default>
+    </key>
+    <key name='shift-scroll-action' type='i'>
+      <default>3</default>
+    </key>
+
+
+    <key name='schema-migrated' type='b'>
+      <default>false</default>
+    </key>
+  </schema>
+
+
+
+  <schema path='/org/gnome/shell/extensions/window-thumnails/' id='org.gnome.shell.extensions.window-thumbnails-old'>
     <key name='limit-number' type='i'>
       <default>0</default>
     </key>

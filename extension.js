@@ -22,7 +22,7 @@ import * as Util from './util.js';
 export default class WTMB extends Extension.Extension {
     enable() {
         const Me = {};
-
+        Me.extension = this;
         Me.metadata = this.metadata;
         Me.gSettings = this.getSettings();
         Me._ = this.gettext.bind(this);
