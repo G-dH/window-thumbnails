@@ -448,6 +448,8 @@ const WindowThumbnail = GObject.registerClass({
         const [x, y] = this._getInitialPosition();
         this._geometry.x = x;
         this._geometry.y = y;
+
+        this._fixGeometry(false);
     }
 
     _getDefaultScale() {
@@ -1104,6 +1106,8 @@ const WindowThumbnail = GObject.registerClass({
 
         this.x = this._winGeometry.x;
         this.y = this._winGeometry.y;
+        // compensate the initial size if clone has been scaled up to remove a shadow
+        this.set_size(this._windowActor.width / this._clone.scale_x, this._windowActor.height / this._clone.scale_y);
 
         this.ease({
             x, y,
