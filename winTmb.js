@@ -323,7 +323,7 @@ const WindowThumbnail = GObject.registerClass({
         if ((opt.REMEMBER_GEOMETRY && metaWin._thumbnailGeometry) || (this._metaWin._thumbnailEnabled && metaWin._thumbnailGeometry)) {
             // Restore and adapt the previous thumbnail position and size if a thumbnail of the window existed during the current session
             this._geometry = metaWin._thumbnailGeometry;
-            this._fixGeometry(false);
+            this._updateSize(false);
 
             // Set position now only if the thumbnail don't need to be animated
             if (this._minimized)
@@ -417,6 +417,8 @@ const WindowThumbnail = GObject.registerClass({
             this.remove();
         }, this);
 
+        this._metaWin.connectObject('size-changed', () => this._updateSize());
+
         if (this._minimized) {
             // if window has been unminimized, remove thumbnail
             this._metaWin.connectObject('shown', () => {
@@ -463,6 +465,12 @@ const WindowThumbnail = GObject.registerClass({
             scale = (opt.DEFAULT_SCALE * this._monitor.width) / width;
 
         return Math.min(scale, this._maxScale);
+    }
+
+    _updateSize(apply = true) {
+        this._winGeometry = this._metaWin.get_frame_rect();
+        this._fixGeometry(apply);
+        this._updateCloneScale();
     }
 
     _applyGeometryPosition() {
