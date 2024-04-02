@@ -412,27 +412,42 @@ const WindowThumbnail = GObject.registerClass({
             return;
 
         // remove thumbnail content and hide thumbnail if its window is destroyed
-        this._windowActor.connectObject('destroy', () => {
-            this._sourceClosed = true;
-            this.remove();
-        }, this);
-
-        this._metaWin.connectObject('size-changed', () => this._updateSize());
+        this._windowActor.connectObject(
+            'destroy',
+            () => {
+                this._sourceClosed = true;
+                this.remove();
+            },
+            this
+        );
 
         if (this._minimized) {
             // if window has been unminimized, remove thumbnail
-            this._metaWin.connectObject('shown', () => {
-                if (!this._tmbDestroyed)
-                    this.remove();
-            }, this);
-        } else if (opt.HIDE_FOCUSED) {
-            global.display.connectObject('notify::focus-window',
+            this._metaWin.connectObject(
+                'shown',
                 () => {
-                    const focusWin = global.display.get_focus_window();
-                    this.visible = this._metaWin !== focusWin;
+                    if (!this._tmbDestroyed)
+                        this.remove();
                 },
                 this
             );
+        } else {
+            this._metaWin.connectObject(
+                'size-changed',
+                () => this._updateSize(),
+                this
+            );
+
+            if (opt.HIDE_FOCUSED) {
+                global.display.connectObject(
+                    'notify::focus-window',
+                    () => {
+                        const focusWin = global.display.get_focus_window();
+                        this.visible = this._metaWin !== focusWin;
+                    },
+                    this
+                );
+            }
         }
     }
 
