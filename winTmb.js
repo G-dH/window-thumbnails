@@ -1025,7 +1025,7 @@ const WindowThumbnail = GObject.registerClass({
             break;
         case 2:
             if (this._minimized)
-                this._remove();
+                this.remove();
             else
                 this._activateWinOnCurrentWs();
             break;
