@@ -126,7 +126,6 @@ var WinTmb = class {
 
         thumbnail.connect('remove', tmb => {
             this._windowThumbnails.splice(this._windowThumbnails.indexOf(tmb), 1);
-            tmb.removeTimeouts();
             tmb.destroy();
             if (this._windowThumbnails.length === 0)
                 this._enableRedirection();
@@ -350,6 +349,7 @@ const WindowThumbnail = GObject.registerClass({
             return;
         this._tmbDestroyed = true;
 
+        this.removeTimeouts();
         this.disconnectObject(this);
         this.remove_all_transitions();
 
