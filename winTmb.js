@@ -442,8 +442,10 @@ const WindowThumbnail = GObject.registerClass({
                 global.display.connectObject(
                     'notify::focus-window',
                     () => {
-                        const focusWin = global.display.get_focus_window();
-                        this.visible = this._metaWin !== focusWin;
+                        if (!Main.overview._shown) {
+                            const focusWin = global.display.get_focus_window();
+                            this.visible = this._metaWin !== focusWin;
+                        }
                     },
                     this
                 );
