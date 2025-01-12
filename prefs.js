@@ -344,7 +344,7 @@ export default class WTMB extends ExtensionPreferences {
             [_('Toggle Window Preview'), 5],
             [_('Toggle Hide On Hover'), 6],
             [_('Reset Thumbnail Scale'), 7],
-            [_('Open WT Preferences'), 8],
+            [_('Open WTMB Preferences'), 8],
         ];
 
         const scrollActionList = [

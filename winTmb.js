@@ -9,13 +9,13 @@
 
 'use strict';
 
-import GLib from 'gi://GLib';
 import Clutter from 'gi://Clutter';
-import St from 'gi://St';
-import Meta from 'gi://Meta';
-import Mtk from 'gi://Mtk';
+import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
 import Graphene from 'gi://Graphene';
+import Meta from 'gi://Meta';
+import Mtk from 'gi://Mtk';
+import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as DND from 'resource:///org/gnome/shell/ui/dnd.js';
@@ -313,6 +313,8 @@ const WindowThumbnail = GObject.registerClass({
         this._addControls();
 
         Main.layoutManager.addChrome(this);
+        Main.uiGroup.set_child_below_sibling(this,
+            Main.layoutManager.panelBox);
 
         // HOVER_SHOW_PREVIEW can be toggled by the user anytime
         // which has to be also able to toggle HOVER_HIDE_TMB
@@ -348,6 +350,8 @@ const WindowThumbnail = GObject.registerClass({
 
         this._metaWin._thumbnailEnabled = true;
         this.tmbRedrawDirection = true;
+
+        this._setShadow();
     }
 
     remove(trackEnabled) {
@@ -485,9 +489,22 @@ const WindowThumbnail = GObject.registerClass({
     }
 
     _updateSize(apply = true) {
-        this._winGeometry = this._metaWin.get_frame_rect();
-        this._fixGeometry(apply);
-        this._updateCloneScale();
+        if (this._timeouts.winResizeDelayId)
+            GLib.source_remove(this._timeouts.winResizeDelayId);
+
+        // Delay updating the size to ensure the use of proper data
+        // when switching between the maximized and unmaximized states of the window
+        this._timeouts.winResizeDelayId = GLib.timeout_add(
+            500,
+            GLib.PRIORITY_LOW,
+            () => {
+                this._winGeometry = this._metaWin.get_frame_rect();
+                this._fixGeometry(apply);
+                this._updateCloneScale();
+                this._timeouts.winResizeDelayId = 0;
+                return GLib.SOURCE_REMOVE;
+            }
+        );
     }
 
     _applyGeometryPosition() {
@@ -663,16 +680,17 @@ const WindowThumbnail = GObject.registerClass({
         this._fixGeometryPosition();
         this._applyGeometry();
         this._geometry.monitorIndex = monitor.index;
+        Main.uiGroup.set_child_below_sibling(this,
+            Main.layoutManager.panelBox);
     }
 
     _onEnterEvent() {
         if (!this._getHover() || this._timeouts.show || this._tmbDestroyed)
             return;
 
-        // global.display.set_cursor(Meta.Cursor.POINTING_HAND);
-        this._closeButton.opacity = CLOSE_BTN_OPACITY;
+	this._closeButton.opacity = CLOSE_BTN_OPACITY;
 
-        if (!(this.HOVER_SHOW_PREVIEW  || this.HOVER_HIDE_TMB) || Me.Util.isAltPressed())
+        if (!(this.HOVER_SHOW_PREVIEW || this.HOVER_HIDE_TMB) || Me.Util.isAltPressed())
             return;
 
         if (this._timeouts.hoverDelay)
@@ -725,7 +743,6 @@ const WindowThumbnail = GObject.registerClass({
             this._timeouts.hoverDelay = 0;
         }
 
-        global.display.set_cursor(Meta.Cursor.DEFAULT);
         this._closeButton.opacity = 0;
 
         if (this._winPreview)
@@ -844,6 +861,7 @@ const WindowThumbnail = GObject.registerClass({
 
         this._updateMetaWinSources(metaWin);
         this._clone.set_source(this._windowActor);
+        this._clone.set_style('border-radius: 15px;');
 
         this._fixGeometry();
         this._updateCloneScale();
@@ -934,10 +952,6 @@ const WindowThumbnail = GObject.registerClass({
         this.add_child(this._closeButton);
     }
 
-    _addMediaControl() {
-
-    }
-
     _showWindowPreview(update = false, dontDestroy = false) {
         if (this._winPreview && !dontDestroy) {
             this._destroyWindowPreview();
@@ -945,16 +959,16 @@ const WindowThumbnail = GObject.registerClass({
             if (!update)
                 return;
         }
-
         if (!this._winPreview) {
             this._winPreview = new WindowPreview();
+            this._winPreview.opacity = 0;
             Main.layoutManager.addChrome(this._winPreview);
             Main.layoutManager.uiGroup.set_child_above_sibling(this._winPreview, null);
             [this._winPreview._xPointer, this._winPreview._yPointer] = global.get_pointer();
         }
 
         if (!update) {
-            this._winPreview.opacity = 255;
+            this._winPreview.opacity = 0;
             this._winPreview.ease({
                 opacity: 255,
                 duration: 70,
@@ -963,7 +977,14 @@ const WindowThumbnail = GObject.registerClass({
         } else {
             this._winPreview.opacity = 255;
         }
+        this._clone.ease({
+            opacity: 20,
+            duration: 70,
+            mode: Clutter.AnimationMode.LINEAR,
+        });
         this._winPreview.window = this._metaWin;
+
+        this._setShadow(false);
     }
 
     _destroyWindowPreview() {
@@ -982,7 +1003,27 @@ const WindowThumbnail = GObject.registerClass({
                     this._winPreview = null;
                 },
             });
+            this._clone.ease({
+                opacity: 255,
+                duration: 100,
+                mode: Clutter.AnimationMode.LINEAR,
+                onStopped: () => {
+                    this._clone.opacity = 255;
+                },
+            });
         }
+
+        Main.uiGroup.set_child_below_sibling(this,
+            Main.layoutManager.panelBox);
+
+        this._setShadow();
+    }
+
+    _setShadow(show = true) {
+        if (show)
+            this.set_style('box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.4);');
+        else
+            this.set_style('');
     }
 
     _activateWindow() {
@@ -1065,60 +1106,6 @@ const WindowThumbnail = GObject.registerClass({
             break;
         }
     }
-
-    /* _setIcon() {
-        let tracker = Shell.WindowTracker.get_default();
-        let app = tracker.get_window_app(this._metaWin);
-        let icon = app
-            ? app.create_icon_texture(this.height)
-            : new St.Icon({ icon_name: 'icon-missing', icon_size: this.height });
-        icon.x_expand = icon.y_expand = true;
-        if (this.icon)
-            this.icon.destroy();
-        this.icon = icon;
-    }*/
-
-    /* _addScrollModeIcon() {
-        this._scrollModeBin = new St.Bin({
-            x_expand: true,
-            y_expand: true,
-        });
-        this._scrollModeResizeIcon = new St.Icon({
-            icon_name: 'view-fullscreen-symbolic',
-            x_align: Clutter.ActorAlign.CENTER,
-            y_align: Clutter.ActorAlign.END,
-            x_expand: true,
-            y_expand: true,
-            opacity: SCROLL_ICON_OPACITY,
-            style_class: 'icon-dropshadow',
-            scale_x: 0.5,
-            scale_y: 0.5,
-        });
-        this._scrollModeResizeIcon.set_style(`
-            margin: 13px;
-            color: rgb(255, 255, 255);
-            box-shadow: 0 0 40px 40px rgba(0,0,0,0.7);
-        `);
-        this._scrollModeSourceIcon = new St.Icon({
-            icon_name: 'media-skip-forward-symbolic',
-            x_align: Clutter.ActorAlign.CENTER,
-            y_align: Clutter.ActorAlign.END,
-            x_expand: true,
-            y_expand: true,
-            opacity: SCROLL_ICON_OPACITY,
-            style_class: 'icon-dropshadow',
-            scale_x: 0.5,
-            scale_y: 0.5,
-        });
-        this._scrollModeSourceIcon.set_style(`
-            margin: 13px;
-            color: rgb(255, 255, 255);
-            box-shadow: 0 0 40px 40px rgba(0,0,0,0.7);
-        `);
-        this._scrollModeBin.set_child(this._scrollModeResizeIcon);
-        this.add_child(this._scrollModeBin);
-        this._scrollModeBin.opacity = 0;
-    }*/
 
     _animateNewTmb() {
         if (this._skipAnimation) {
