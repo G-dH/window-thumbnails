@@ -6,10 +6,11 @@
   "shell-version": [
     "45",
     "46",
-    "47"
+    "47",
+    "48"
   ],
   "url": "https://github.com/G-dH/window-thumbnails",
   "donations": {"buymeacoffee": "georgdh"},
   "uuid": "window-thumbnails@G-dH.github.com",
-  "version-name": "47.1"
+  "version-name": "48.0"
 }
