@@ -126,7 +126,10 @@ export const WinTmb = class {
 
         // Disable the compositor redirection if needed
         if (opt.DISABLE_UNREDIRECTION && !this._redirectionDisabled) {
-            Meta.disable_unredirect_for_display(global.display);
+            if (Meta.disable_unredirect_for_display)
+                Meta.disable_unredirect_for_display(global.display);
+            else // new in GS 48
+                global.compositor.disable_unredirect();
             this._redirectionDisabled = true;
         }
 
@@ -143,6 +146,10 @@ export const WinTmb = class {
     _enableRedirection() {
         if (this._redirectionDisabled) {
             Meta.enable_unredirect_for_display(global.display);
+            if (Meta.enable_unredirect_for_display)
+                Meta.enable_unredirect_for_display(global.display);
+            else // new in GS 48
+                global.compositor.enable_unredirect();
             this._redirectionDisabled = false;
         }
     }
