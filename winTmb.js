@@ -3,7 +3,7 @@
  * winTmb.js
  *
  * @author     GdH <G-dH@github.com>
- * @copyright  2024
+ * @copyright  2024 - 2025
  * @license    GPL-3.0
  */
 
@@ -27,6 +27,9 @@ let _;
 const DRAG_OPACITY = 200;
 const CLOSE_BTN_OPACITY = 240;
 const MINIMIZE_WINDOW_ANIMATION_MODE = Clutter.AnimationMode.EASE_OUT_EXPO; // WindowManager.MINIMIZE_WINDOW_ANIMATION_MODE
+const FADE_TIME = 200;
+const PREVIEW_IN_TIME = 70;
+const PREVIEW_OUT_TIME = 100;
 
 export const WinTmb = class {
     constructor(me) {
@@ -63,7 +66,7 @@ export const WinTmb = class {
         // but keep information about the current state in the source windows
         this.removeAll(true);
         // Restore Meta.display redirection
-        this._enableRedirection();
+        this._enableDisplayRedirection();
         // Remove global API
         delete global.windowThumbnails;
         Me = null;
@@ -125,33 +128,36 @@ export const WinTmb = class {
         this._windowThumbnails.push(thumbnail);
 
         // Disable the compositor redirection if needed
-        if (opt.DISABLE_UNREDIRECTION && !this._redirectionDisabled) {
-            if (Meta.disable_unredirect_for_display)
-                Meta.disable_unredirect_for_display(global.display);
-            else // new in GS 48
-                global.compositor.disable_unredirect();
-            this._redirectionDisabled = true;
-        }
+        if (opt.DISABLE_UNREDIRECTION && !this._redirectionDisabled)
+            this._disableDisplayRedirection();
+
 
         thumbnail.connect('remove', tmb => {
             this._windowThumbnails.splice(this._windowThumbnails.indexOf(tmb), 1);
             tmb.destroy();
             if (this._windowThumbnails.length === 0)
-                this._enableRedirection();
+                this._enableDisplayRedirection();
         });
 
         return thumbnail;
     }
 
-    _enableRedirection() {
+    _enableDisplayRedirection() {
         if (this._redirectionDisabled) {
-            Meta.enable_unredirect_for_display(global.display);
             if (Meta.enable_unredirect_for_display)
                 Meta.enable_unredirect_for_display(global.display);
             else // new in GS 48
                 global.compositor.enable_unredirect();
             this._redirectionDisabled = false;
         }
+    }
+
+    _disableDisplayRedirection() {
+        if (Meta.disable_unredirect_for_display)
+            Meta.disable_unredirect_for_display(global.display);
+        else // new in GS 48
+            global.compositor.disable_unredirect();
+        this._redirectionDisabled = true;
     }
 
     _getCurrentWindow() {
@@ -174,7 +180,7 @@ export const WinTmb = class {
         this._windowThumbnails.forEach(tmb => {
             tmb.ease({
                 opacity: 0,
-                duration: 200,
+                duration: FADE_TIME,
                 mode: Clutter.AnimationMode.EASE_OUT_QUAD,
                 onComplete: () => tmb.hide(),
             });
@@ -187,7 +193,7 @@ export const WinTmb = class {
             tmb.show();
             tmb.ease({
                 opacity: 255,
-                duration: 100,
+                duration: FADE_TIME,
                 mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             });
         });
@@ -320,8 +326,7 @@ const WindowThumbnail = GObject.registerClass({
         this._addControls();
 
         Main.layoutManager.addChrome(this);
-        Main.uiGroup.set_child_below_sibling(this,
-            Main.layoutManager.panelBox);
+        this._setBelowPanel();
 
         // HOVER_SHOW_PREVIEW can be toggled by the user anytime
         // which has to be also able to toggle HOVER_HIDE_TMB
@@ -375,8 +380,7 @@ const WindowThumbnail = GObject.registerClass({
 
         Main.layoutManager.disconnectObject(this);
 
-        if (this._winPreview)
-            this._destroyWindowPreview();
+        this._destroyWindowPreview();
 
         if (this._minimized && !this._sourceClosed) {
             if (!trackEnabled) {
@@ -455,7 +459,10 @@ const WindowThumbnail = GObject.registerClass({
                     () => {
                         if (!Main.overview._shown) {
                             const focusWin = global.display.get_focus_window();
-                            this.visible = this._metaWin !== focusWin;
+                            if (this._metaWin === focusWin)
+                                this._fadeOut();
+                            else
+                                this._fadeIn();
                         }
                     },
                     this
@@ -687,15 +694,14 @@ const WindowThumbnail = GObject.registerClass({
         this._fixGeometryPosition();
         this._applyGeometry();
         this._geometry.monitorIndex = monitor.index;
-        Main.uiGroup.set_child_below_sibling(this,
-            Main.layoutManager.panelBox);
+        this._setBelowPanel();
     }
 
     _onEnterEvent() {
         if (!this._getHover() || this._timeouts.show || this._tmbDestroyed)
             return;
 
-	this._closeButton.opacity = CLOSE_BTN_OPACITY;
+        this._closeButton.opacity = CLOSE_BTN_OPACITY;
 
         if (!(this.HOVER_SHOW_PREVIEW || this.HOVER_HIDE_TMB) || Me.Util.isAltPressed())
             return;
@@ -752,8 +758,7 @@ const WindowThumbnail = GObject.registerClass({
 
         this._closeButton.opacity = 0;
 
-        if (this._winPreview)
-            this._destroyWindowPreview();
+        this._destroyWindowPreview();
     }
 
     /* _onMouseMove(actor, event) {
@@ -978,7 +983,7 @@ const WindowThumbnail = GObject.registerClass({
             this._winPreview.opacity = 0;
             this._winPreview.ease({
                 opacity: 255,
-                duration: 70,
+                duration: PREVIEW_IN_TIME,
                 mode: Clutter.AnimationMode.LINEAR,
             });
         } else {
@@ -986,7 +991,7 @@ const WindowThumbnail = GObject.registerClass({
         }
         this._clone.ease({
             opacity: 20,
-            duration: 70,
+            duration: PREVIEW_IN_TIME,
             mode: Clutter.AnimationMode.LINEAR,
         });
         this._winPreview.window = this._metaWin;
@@ -1003,7 +1008,7 @@ const WindowThumbnail = GObject.registerClass({
             }
             this._winPreview.ease({
                 opacity: 0,
-                duration: 100,
+                duration: PREVIEW_OUT_TIME,
                 mode: Clutter.AnimationMode.LINEAR,
                 onComplete: () => {
                     this._winPreview.destroy();
@@ -1012,7 +1017,7 @@ const WindowThumbnail = GObject.registerClass({
             });
             this._clone.ease({
                 opacity: 255,
-                duration: 100,
+                duration: PREVIEW_OUT_TIME,
                 mode: Clutter.AnimationMode.LINEAR,
                 onStopped: () => {
                     this._clone.opacity = 255;
@@ -1020,10 +1025,17 @@ const WindowThumbnail = GObject.registerClass({
             });
         }
 
-        Main.uiGroup.set_child_below_sibling(this,
-            Main.layoutManager.panelBox);
+        this._setBelowPanel();
 
         this._setShadow();
+    }
+
+    _setBelowPanel() {
+        const lm = Main.layoutManager;
+        if (lm.panelBox.get_parent() !== lm.uiGroup)
+            return;
+        lm.uiGroup.set_child_below_sibling(this,
+            lm.panelBox);
     }
 
     _setShadow(show = true) {
@@ -1224,6 +1236,27 @@ const WindowThumbnail = GObject.registerClass({
                 actor.set_scale(1, 1);
                 // destroy the thumbnail
                 this.emit('remove');
+            },
+        });
+    }
+
+    _fadeIn() {
+        this.show();
+        this.ease({
+            opacity: 255,
+            duration: FADE_TIME,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+        });
+    }
+
+    _fadeOut() {
+        this.ease({
+            opacity: 0,
+            duration: FADE_TIME,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            onComplete: () => {
+                this.hide();
+                this._destroyWindowPreview();
             },
         });
     }
