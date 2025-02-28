@@ -816,12 +816,16 @@ const WindowThumbnail = GObject.registerClass({
     }
 
     _onScrollEvent(actor, event) {
+        const state = event.get_state();
+        // Super + Scroll switches workspaces in GNOME Shell
+        if ((state & Clutter.ModifierType.MOD4_MASK) !== 0)
+            return Clutter.EVENT_PROPAGATE;
+
         if ((Date.now() - this._scrollTime) < 50)
             return Clutter.EVENT_STOP;
 
         this._scrollTime = Date.now();
         let direction = Me.Util.getScrollDirection(event);
-        let state = event.get_state();
 
         let action;
         if (Me.Util.isCtrlPressed(state))
