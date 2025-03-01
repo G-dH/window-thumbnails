@@ -4,7 +4,7 @@ A GNOME Shell extension that allows the creation of scaled-down window clones fo
 WTMB is supported by the V-Shell, AATWS and CHC-E extensions which allows you to create window thumbnails using their controls.
 
 ## Features
-- Supports GNOME Shell 42 - 46
+- Supports GNOME Shell 42 - 48
 - Thumbnails support DND to move them anywhere on the screen
 - Minimize windows to thumbnails
 - Optional full size preview on hover
