@@ -9,41 +9,42 @@ msgstr ""
 "Project-Id-Version: window-thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-06 22:33+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2025-09-06 22:59+0200\n"
+"Last-Translator: p-sage\n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.7\n"
 
 #: prefs.js:27 prefs.js:292
 msgid "Geometry"
-msgstr ""
+msgstr "Géométrie"
 
 #: prefs.js:32
 msgid "Behavior"
-msgstr ""
+msgstr "Comportement"
 
 #: prefs.js:37 prefs.js:334
 msgid "Controls"
-msgstr ""
+msgstr "Contrôles"
 
 #: prefs.js:42
 msgid "Shortcuts"
-msgstr ""
+msgstr "Raccourcis"
 
 #: prefs.js:47
 msgid "Mouse"
-msgstr ""
+msgstr "Souris"
 
 #: prefs.js:52
 msgid "About"
-msgstr ""
+msgstr "À propos"
 
 #: prefs.js:103
 msgid "Maximum Number Of Thumbnails"
-msgstr ""
+msgstr "Nombre maximal de vignettes"
 
 #: prefs.js:104
 msgid ""
@@ -52,18 +53,22 @@ msgid ""
 "existing one. This limit does not apply to the \"Minimize to thumbnail\" "
 "action"
 msgstr ""
+"Limitez le nombre de vignettes à une seule si vous n'en avez pas besoin de "
+"plus et souhaitez simplifier le contrôle. Dans ce cas, la création d'une "
+"nouvelle vignette supprime la vignette existante. Cette limite ne s'applique "
+"pas à l'action « Réduire en vignette »"
 
 #: prefs.js:108
 msgid "Unlimited"
-msgstr ""
+msgstr "Illimité"
 
 #: prefs.js:109
 msgid "Only One"
-msgstr ""
+msgstr "Seulement une"
 
 #: prefs.js:116
 msgid "Mouse Hover Action"
-msgstr ""
+msgstr "Action du survol de la souris"
 
 #: prefs.js:117
 msgid ""
@@ -72,22 +77,26 @@ msgid ""
 "on the thumbnail. To prevent the execution of the selected action, hold down "
 "the Alt key while hovering the mouse pointer over the thumbnail"
 msgstr ""
+"Choisissez le comportement de la vignette au survol. L'option « Afficher "
+"l'aperçu en taille réelle » peut également être activée par un clic droit "
+"sur la vignette. Pour empêcher l'exécution de l'action sélectionnée, "
+"maintenez la touche Alt enfoncée tout en survolant la vignette"
 
 #: prefs.js:121
 msgid "No Action"
-msgstr ""
+msgstr "Aucune action"
 
 #: prefs.js:122
 msgid "Show Full Size Preview"
-msgstr ""
+msgstr "Afficher l'aperçu en taille réelle"
 
 #: prefs.js:123
 msgid "Hide"
-msgstr ""
+msgstr "Masquer"
 
 #: prefs.js:137
 msgid "Mouse Hover Action Delay"
-msgstr ""
+msgstr "Délai d'action du survol de la souris"
 
 #: prefs.js:138
 msgid ""
@@ -95,36 +104,42 @@ msgid ""
 "you to drag the thumbnail to another position before it is hidden or a full-"
 "size preview is created"
 msgstr ""
+"Ajuste le délai avant l'exécution de l'action sélectionnée. Ce délai vous "
+"permet de déplacer la vignette vers un autre emplacement avant qu'elle ne "
+"soit masquée ou qu'un aperçu en taille réelle ne soit créé"
 
 #: prefs.js:146
 msgid "Hide On Source Window Focus"
-msgstr ""
+msgstr "Masquer lors du focus de la fenêtre source"
 
 #: prefs.js:147
 msgid "Hide thumbnail if its source window gets focus"
-msgstr ""
+msgstr "Masquer la vignette si sa fenêtre source obtient le focus"
 
 #: prefs.js:165
 msgid "Animation Time (ms)"
-msgstr ""
+msgstr "Durée de l'animation (ms)"
 
 #: prefs.js:166
 msgid "Adjusts speed of transition animations"
-msgstr ""
+msgstr "Ajuste la vitesse des animations de transition"
 
 #: prefs.js:181
 msgid "Thumbnail Opacity"
-msgstr ""
+msgstr "Opacité des vignettes"
 
 #: prefs.js:182
 msgid ""
 "Adjusts the default thumbnail opacity. You can modify the opacity at any "
 "time using a shortcut (default Shift + Scroll) while hovering the thumbnail"
 msgstr ""
+"Ajuste l'opacité par défaut des vignettes. Vous pouvez modifier l'opacité à "
+"tout moment grâce à un raccourci (Maj + Défilement par défaut) en survolant "
+"la vignette"
 
 #: prefs.js:190
 msgid "Keep Thumbnails Visible In Fullscreen Mode"
-msgstr ""
+msgstr "Garder les vignettes visibles en mode plein écran"
 
 #: prefs.js:191
 msgid ""
@@ -132,46 +147,53 @@ msgid ""
 "performance of fullscreen apps like games, which results in the "
 "disappearance of the window thumbnails"
 msgstr ""
+"En mode plein écran, GNOME Shell contourne le compositeur pour améliorer les "
+"performances des applications plein écran comme les jeux, ce qui entraîne la "
+"disparition des vignettes des fenêtres"
 
 #: prefs.js:206
 msgid "Default Size"
-msgstr ""
+msgstr "Taille par défaut"
 
 #: prefs.js:219
 msgid "Thumbnail Scale"
-msgstr ""
+msgstr "Échelle des vignettes"
 
 #: prefs.js:220
 msgid ""
 "The size of the thumbnail in the selected axis relative to the screen width "
 "or height (set below)"
 msgstr ""
+"La taille de la vignette dans l'axe sélectionné par rapport à la largeur ou "
+"à la hauteur de l'écran (définie ci-dessous)"
 
 #: prefs.js:228
 msgid "Scale Axis"
-msgstr ""
+msgstr "Axe d'échelle"
 
 #: prefs.js:229
 msgid ""
 "Choose whether the scale should be applied to the height or width of the "
 "thumbnail. The original aspect ratio will be preserved"
 msgstr ""
+"Choisissez si l'échelle doit être appliquée à la hauteur ou à la largeur de "
+"la vignette. Le rapport hauteur/largeur d'origine sera conservé"
 
 #: prefs.js:233
 msgid "Height"
-msgstr ""
+msgstr "Hauteur"
 
 #: prefs.js:234
 msgid "Width"
-msgstr ""
+msgstr "Largeur"
 
 #: prefs.js:241
 msgid "Default Position"
-msgstr ""
+msgstr "Position par défaut"
 
 #: prefs.js:247
 msgid "Custom Position"
-msgstr ""
+msgstr "Position personnalisée"
 
 #: prefs.js:248
 msgid ""
@@ -179,30 +201,37 @@ msgid ""
 "it to display at the mouse pointer position. You can then drag and drop the "
 "thumbnail anywhere on the screen whenever you want"
 msgstr ""
+"Définissez une position par défaut personnalisée pour la nouvelle vignette à "
+"l'écran, ou laissez-la s'afficher à la position du pointeur de la souris. "
+"Vous pouvez ensuite la glisser-déposer où vous le souhaitez sur l'écran"
 
 #: prefs.js:263
 msgid "Horizontal Position"
-msgstr ""
+msgstr "Position horizontale"
 
 #: prefs.js:264
 msgid ""
 "Adjusts the horizontal position of the new thumbnail as a percentage of the "
 "screen width from the left"
 msgstr ""
+"Ajuste la position horizontale de la nouvelle vignette en pourcentage de la "
+"largeur de l'écran à partir de la gauche"
 
 #: prefs.js:281
 msgid "Vertical Position"
-msgstr ""
+msgstr "Position verticale"
 
 #: prefs.js:282
 msgid ""
 "Adjusts vertical position of the new thumbnail as a percentage of the screen "
 "height from the top"
 msgstr ""
+"Ajuste la position verticale de la nouvelle vignette en pourcentage de la "
+"hauteur de l'écran à partir du haut"
 
 #: prefs.js:298
 msgid "Remember Geometry"
-msgstr ""
+msgstr "Se souvenir de la géométrie"
 
 #: prefs.js:299
 msgid ""
@@ -210,248 +239,260 @@ msgid ""
 "when creating a thumbnail with the same source window as a previously "
 "removed one"
 msgstr ""
+"Activez cette option pour mémoriser la géométrie, en restaurant la taille et "
+"la position lors de la création d'une vignette avec la même fenêtre source "
+"qu'une fenêtre précédemment supprimée"
 
 #: prefs.js:313
 msgid "Buttons"
-msgstr ""
+msgstr "Boutons"
 
 #: prefs.js:319
 msgid "Show Close/Unminimize Button"
-msgstr ""
+msgstr "Afficher le bouton Fermer/Réduire"
 
 #: prefs.js:320
 msgid ""
 "Show the Close/Unminimize Button, which allows you to remove the window "
 "thumbnail"
 msgstr ""
+"Afficher le bouton Fermer/Réduire, qui vous permet de supprimer la vignette "
+"de la fenêtre"
 
 #: prefs.js:339 prefs.js:351
 msgid "Disable"
-msgstr ""
+msgstr "Désactiver"
 
 #: prefs.js:340
 msgid "Activate Source Window"
-msgstr ""
+msgstr "Activer la fenêtre source"
 
 #: prefs.js:341
 msgid "Activate Source On Current Workspace"
-msgstr ""
+msgstr "Activer la source sur l'espace de travail actuel"
 
 #: prefs.js:342
 msgid "Remove Thumbnail"
-msgstr ""
+msgstr "Supprimer la vignette"
 
 #: prefs.js:343
 msgid "Close Source Window"
-msgstr ""
+msgstr "Fermer la fenêtre source"
 
 #: prefs.js:344
 msgid "Toggle Window Preview"
-msgstr ""
+msgstr "Basculer l'aperçu de la fenêtre"
 
 #: prefs.js:345
 msgid "Toggle Hide On Hover"
-msgstr ""
+msgstr "Activer/désactiver le masquage au survol"
 
 #: prefs.js:346
 msgid "Reset Thumbnail Scale"
-msgstr ""
+msgstr "Réinitialiser l'échelle des vignettes"
 
 #: prefs.js:347
 msgid "Open WTMB Preferences"
-msgstr ""
+msgstr "Ouvrir les préférences de WTMB"
 
 #: prefs.js:352
 msgid "Resize"
-msgstr ""
+msgstr "Redimensionner"
 
 #: prefs.js:353
 msgid "Switch Source Window"
-msgstr ""
+msgstr "Changer la fenêtre de source"
 
 #: prefs.js:354
 msgid "Change Opacity"
-msgstr ""
+msgstr "Changer l'opacité"
 
 #: prefs.js:359
 msgid "Double Click Action"
-msgstr ""
+msgstr "Action du double-clic"
 
 #: prefs.js:369
 msgid "Middle Button Action"
-msgstr ""
+msgstr "Action du bouton du milieu"
 
 #: prefs.js:379
 msgid "Secondary Button Action"
-msgstr ""
+msgstr "Action du bouton secondaire"
 
 #: prefs.js:389
 msgid "Ctrl + Primary Button Action"
-msgstr ""
+msgstr "Action de Ctrl + bouton primaire"
 
 #: prefs.js:399
 msgid "Ctrl + Secondary Button Action"
-msgstr ""
+msgstr "Action de Ctrl + bouton secondaire"
 
 #: prefs.js:409
 msgid "Scroll Wheel Action"
-msgstr ""
+msgstr "Action de la molette"
 
 #: prefs.js:419
 msgid "Ctrl + Scroll Wheel Action"
-msgstr ""
+msgstr "Action de Ctrl + molette"
 
 #: prefs.js:429
 msgid "Shift + Scroll Wheel Action"
-msgstr ""
+msgstr "Action de Shift + molette"
 
 #: prefs.js:445
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "Raccourcis clavier"
 
 #: prefs.js:451
 msgid "Create Window Thumbnail"
-msgstr ""
+msgstr "Créer une vignette de fenêtre"
 
 #: prefs.js:452
 msgid "Creates a new live thumbnail of the currently focused window"
 msgstr ""
+"Crée une nouvelle vignette en direct de la fenêtre actuellement focalisée"
 
 #: prefs.js:460
 msgid "Minimize To Thumbnail"
-msgstr ""
+msgstr "Réduire en vignette"
 
 #: prefs.js:461
 msgid ""
 "Minimizes the currently focused window to the newly created live thumbnail"
 msgstr ""
+"Réduit la fenêtre actuellement focalisée à la vignette en direct "
+"nouvellement créée"
 
 #: prefs.js:469
 msgid "Remove Last Thumbnail"
-msgstr ""
+msgstr "Supprimer la dernière vignette"
 
 #: prefs.js:470
 msgid "Removes the last-created window thumbnail"
-msgstr ""
+msgstr "Supprime la dernière vignette de fenêtre créée"
 
 #: prefs.js:478
 msgid "Remove All Thumbnails"
-msgstr ""
+msgstr "Supprimer toutes les vignettes"
 
 #: prefs.js:479
 msgid "Removes all window thumbnails"
-msgstr ""
+msgstr "Supprime toutes les vignettes de fenêtre"
 
 #: prefs.js:487
 msgid "Toggle Thumbnails Visibility"
-msgstr ""
+msgstr "Activer/désactiver la visibilité des vignettes"
 
 #: prefs.js:488
 msgid "Temporarily hides all created thumbnails"
-msgstr ""
+msgstr "Masque temporairement toutes les vignettes créées"
 
 #: prefs.js:496
 msgid "Switch Source Window To Next"
-msgstr ""
+msgstr "Basculer la fenêtre source vers la suivante"
 
 #: prefs.js:497 prefs.js:506
 msgid ""
 "Replaces the source window of a thumbnail. This action applies to the last "
 "thumbnail that was not created as \"Minimize To Thumbnail\""
 msgstr ""
+"Remplace la fenêtre source d'une vignette. Cette action s'applique à la "
+"dernière vignette qui n'a pas été créée avec l'option « Réduire en vignette »"
 
 #: prefs.js:505
 msgid "Switch Source Window To Previous"
-msgstr ""
+msgstr "Basculer la fenêtre source vers la précédente"
 
 #: prefs.js:527
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: prefs.js:533
 msgid "Reset all options"
-msgstr ""
+msgstr "Réinitialiser toutes les options"
 
 #: prefs.js:534
 msgid "Reset all options to their default values"
-msgstr ""
+msgstr "Réinitialiser toutes les options à leurs valeurs par défaut"
 
 #: prefs.js:540
 msgid "Links"
-msgstr ""
+msgstr "Liens"
 
 #: prefs.js:544
 msgid "Homepage"
-msgstr ""
+msgstr "Page d'accueil"
 
 #: prefs.js:545
 msgid "Source code and more info about this extension"
-msgstr ""
+msgstr "Code source et plus d'informations sur cette extension"
 
 #: prefs.js:556
 msgid "GNOME Extensions"
-msgstr ""
+msgstr "GNOME Extensions"
 
 #: prefs.js:557
 msgid "Rate and comment this extension on the GNOME Extensions site"
-msgstr ""
+msgstr "Notez et commentez cette extension sur le site GNOME Extensions"
 
 #: prefs.js:562
 msgid "Report a bug or suggest new feature"
-msgstr ""
+msgstr "Signaler un bug ou suggérer une nouvelle fonctionnalité"
 
 #: prefs.js:563
 msgid "Help me to help you!"
-msgstr ""
+msgstr "Aidez-moi à vous aider !"
 
 #: prefs.js:568
 msgid "Buy Me a Coffee"
-msgstr ""
+msgstr "Achetez-moi un café"
 
 #: prefs.js:569
 msgid "Enjoying this extension? Consider supporting it by buying me a coffee!"
-msgstr ""
+msgstr "Vous aimez cette extension ? Soutenez-la en m'offrant un café !"
 
 #: winTmb.js:96
 msgid "This window cannot be minimized"
-msgstr ""
+msgstr "Cette fenêtre ne peut pas être minimisée"
 
 #: optionsFactory.js:228
 msgid "<b>Enter new shortcut</b>"
-msgstr ""
+msgstr "<b>Entrez un nouveau raccourci</b>"
 
 #: optionsFactory.js:240
 msgid "Press Esc to cancel or Backspace to disable the keyboard shortcut"
 msgstr ""
+"Appuyez sur Échap pour annuler \n"
+"ou sur Retour arrière pour désactiver le raccourci clavier"
 
 #: optionsFactory.js:416
 msgid "Reset profile to defaults"
-msgstr ""
+msgstr "Réinitialiser le profil aux valeurs par défaut"
 
 #: optionsFactory.js:424
 msgid "GNOME 3"
-msgstr ""
+msgstr "GNOME 3"
 
 #: optionsFactory.js:425
 msgid "GNOME 40+ - Bottom Hot Edge"
-msgstr ""
+msgstr "GNOME 40+ - Bord actif inférieur"
 
 #: optionsFactory.js:426
 msgid "Hot Corner Centric - Top Left Hot Corner"
-msgstr ""
+msgstr "Coin active centré - Coin actif en haut à gauche"
 
 #: optionsFactory.js:427
 msgid "Dock Overview - Bottom Hot Edge"
-msgstr ""
+msgstr "Aperçu du Dock - Bord actif inférieur"
 
 #: optionsFactory.js:449
 msgid "Load profile"
-msgstr ""
+msgstr "Charger un profil"
 
 #: optionsFactory.js:458
 msgid "Save current settings into this profile"
-msgstr ""
+msgstr "Enregistrer les paramètres actuels dans ce profil"
 
 #: optionsFactory.js:510
 msgid "Disabled"
-msgstr ""
+msgstr "Désactivé"
