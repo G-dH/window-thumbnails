@@ -190,12 +190,15 @@ export const WinTmb = class {
 
     showAll() {
         this._windowThumbnails.forEach(tmb => {
-            tmb.show();
-            tmb.ease({
-                opacity: 255,
-                duration: FADE_TIME,
-                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-            });
+            const focusWin = global.display.get_focus_window();
+            if (!opt.HIDE_FOCUSED || tmb._metaWin !== focusWin) {
+                tmb.show();
+                tmb.ease({
+                    opacity: 255,
+                    duration: FADE_TIME,
+                    mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                });
+            }
         });
         this._thumbnailsHidden = false;
     }
