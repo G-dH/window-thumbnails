@@ -549,8 +549,8 @@ const WindowThumbnail = GObject.registerClass({
         // Delay updating the size to ensure the use of proper data
         // when switching between the maximized and unmaximized states of the window
         this._timeouts.winResizeDelayId = GLib.timeout_add(
-            500,
             GLib.PRIORITY_LOW,
+            500,
             () => {
                 this._winGeometry = this._metaWin.get_frame_rect();
                 this._fixGeometry(apply);
