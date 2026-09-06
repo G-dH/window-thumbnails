@@ -30,6 +30,8 @@ const MINIMIZE_WINDOW_ANIMATION_MODE = Clutter.AnimationMode.EASE_OUT_EXPO; // W
 const FADE_TIME = 200;
 const PREVIEW_IN_TIME = 70;
 const PREVIEW_OUT_TIME = 100;
+// Upper bound for one refresh cycle of a rate-limited thumbnail
+const REFRESH_TIMEOUT = 1000;
 
 export const WinTmb = class {
     constructor(me) {
@@ -44,6 +46,15 @@ export const WinTmb = class {
                 this.showAll();
         }, this);
         Main.overview.connectObject('showing', () => this.hideAll(), this);
+
+        // Apply changes of the performance settings to the existing thumbnails
+        opt.connect('changed', (settings, key) => {
+            if (key !== 'refresh-rate-limit' && key !== 'downscale-quality')
+                return;
+            // The signal can arrive before the cached values are updated
+            opt._updateCachedSettings();
+            this._windowThumbnails.forEach(tmb => tmb._updateRefreshMode());
+        });
 
         // Create a globally accessible API for other extensions
         global.windowThumbnails = {
@@ -314,14 +325,23 @@ const WindowThumbnail = GObject.registerClass({
         };
 
         // Insert window clone
-        this._clone = new Clutter.Clone({
+        // The container controls the opacity of the content and hosts
+        // the offscreen effect that caches the content when the refresh rate is limited
+        this._content = new Clutter.Actor({
+            layout_manager: new Clutter.BinLayout(),
             reactive: false,
             opacity: this._customOpacity,
             x_expand: true,
             y_expand: true,
         });
+        this._clone = new Clutter.Clone({
+            reactive: false,
+            x_expand: true,
+            y_expand: true,
+        });
         this._clone.set_source(this._windowActor);
-        this.add_child(this._clone);
+        this._content.add_child(this._clone);
+        this.add_child(this._content);
 
         // "Remove" shadow box
         this._updateCloneScale();
@@ -367,6 +387,21 @@ const WindowThumbnail = GObject.registerClass({
         this.tmbRedrawDirection = true;
 
         this._setShadow();
+
+        this.connectObject('notify::mapped', () => {
+            if (!this._refreshActive)
+                return;
+            if (this.mapped) {
+                // Refresh the content as soon as the thumbnail is shown again
+                if (!this._timeouts?.refreshTick)
+                    this._refreshTick();
+            } else {
+                // A hidden thumbnail is never painted, so a pending cycle could not finish
+                this._cancelPendingRefresh();
+            }
+        }, this);
+        // Keep the clone live until the creation animation finishes
+        this._updateRefreshMode(this._skipAnimation ? 0 : opt.ANIMATION_TIME);
     }
 
     remove(trackEnabled) {
@@ -374,6 +409,8 @@ const WindowThumbnail = GObject.registerClass({
             return;
         this._tmbDestroyed = true;
 
+        this._stopRefreshCycle();
+        this._setSourceMipmaps(true);
         this.removeTimeouts();
         this.disconnectObject(this);
         this.remove_all_transitions();
@@ -537,6 +574,8 @@ const WindowThumbnail = GObject.registerClass({
         // but the reactive area of the actor doesn't change until the actor is redrawn
         // this updates the actor's input region area
         Main.layoutManager._queueUpdateRegions();
+        // The cached content of a rate-limited thumbnail has to be re-rendered in the new size
+        this._refreshContentNow();
     }
 
     _applyGeometry() {
@@ -877,15 +916,17 @@ const WindowThumbnail = GObject.registerClass({
 
         const disconnect = true;
         this._updateSourceConnections(disconnect);
+        this._stopRefreshCycle();
+        this._setSourceMipmaps(true);
 
         this._updateMetaWinSources(metaWin);
         this._clone.set_source(this._windowActor);
-        this._clone.set_style('border-radius: 15px;');
 
         this._fixGeometry();
         this._updateCloneScale();
 
         this._updateSourceConnections();
+        this._updateRefreshMode();
 
         if (this._winPreview) {
             const update = true;
@@ -914,12 +955,12 @@ const WindowThumbnail = GObject.registerClass({
     _changeOpacity(direction) {
         switch (direction) {
         case Clutter.ScrollDirection.UP:
-            this._clone.opacity = Math.max(48, this._clone.opacity + 24);
-            this._customOpacity = this._clone.opacity;
+            this._content.opacity = Math.max(48, this._content.opacity + 24);
+            this._customOpacity = this._content.opacity;
             break;
         case Clutter.ScrollDirection.DOWN:
-            this._clone.opacity = Math.min(255, this._clone.opacity - 24);
-            this._customOpacity = this._clone.opacity;
+            this._content.opacity = Math.min(255, this._content.opacity - 24);
+            this._customOpacity = this._content.opacity;
             break;
         default:
             return Clutter.EVENT_PROPAGATE;
@@ -996,7 +1037,7 @@ const WindowThumbnail = GObject.registerClass({
         } else {
             this._winPreview.opacity = 255;
         }
-        this._clone.ease({
+        this._content.ease({
             opacity: 20,
             duration: PREVIEW_IN_TIME,
             mode: Clutter.AnimationMode.LINEAR,
@@ -1022,12 +1063,12 @@ const WindowThumbnail = GObject.registerClass({
                     this._winPreview = null;
                 },
             });
-            this._clone.ease({
+            this._content.ease({
                 opacity: 255,
                 duration: PREVIEW_OUT_TIME,
                 mode: Clutter.AnimationMode.LINEAR,
                 onStopped: () => {
-                    this._clone.opacity = 255;
+                    this._content.opacity = 255;
                 },
             });
         }
@@ -1035,6 +1076,185 @@ const WindowThumbnail = GObject.registerClass({
         this._setBelowPanel();
 
         this._setShadow();
+    }
+
+    // Refresh rate limit ------------------------------------------------------
+    // A live Clutter.Clone forces the compositor to repaint the thumbnail with every frame
+    // of the source window and keeps the source window rendering even when it is hidden.
+    // In the rate-limited mode, the content is cached in an offscreen buffer and the clone
+    // is mapped only for a moment in every refresh interval to obtain a new frame:
+    //   1. the clone is shown, which makes the compositor send a frame callback to the source window
+    //   2. the window renders a new frame and its actor emits 'damaged'
+    //   3. the effect re-renders its buffer from the new frame during the following paint
+    //   4. the clone is hidden again, the effect keeps painting the cached buffer
+
+    _updateRefreshMode(delay = 0) {
+        if (this._tmbDestroyed)
+            return;
+
+        this._stopRefreshCycle();
+        this._setSourceMipmaps(opt.SMOOTH_DOWNSCALE);
+
+        if (!opt.REFRESH_INTERVAL) {
+            // Live mode - keep the original rendering path
+            if (this._contentCache) {
+                this._content.remove_effect(this._contentCache);
+                this._contentCache = null;
+            }
+            this._content.clip_to_allocation = false;
+            this._clone.show();
+            return;
+        }
+
+        this._refreshActive = true;
+        // The cached content may be outdated or belong to a previous source window
+        this._forceNextRender = true;
+        // The effect is attached at the first tick, so the clone stays live during the delay
+        this._scheduleRefreshTick(delay);
+    }
+
+    _ensureContentCache() {
+        if (this._contentCache)
+            return;
+
+        this._contentCache = new ContentCacheEffect();
+        // A stable paint volume keeps the offscreen buffer size independent of the clone visibility
+        this._content.clip_to_allocation = true;
+        this._content.add_effect(this._contentCache);
+    }
+
+    _stopRefreshCycle() {
+        this._refreshActive = false;
+        this._cancelPendingRefresh();
+        if (this._timeouts?.refreshTick) {
+            GLib.source_remove(this._timeouts.refreshTick);
+            this._timeouts.refreshTick = 0;
+        }
+    }
+
+    _cancelPendingRefresh() {
+        if (this._damagedId) {
+            this._windowActor.disconnect(this._damagedId);
+            this._damagedId = 0;
+        }
+        if (this._timeouts?.refreshTimeout) {
+            GLib.source_remove(this._timeouts.refreshTimeout);
+            this._timeouts.refreshTimeout = 0;
+        }
+        this._contentCache?.cancelRender();
+        this._refreshPending = false;
+    }
+
+    _scheduleRefreshTick(delay) {
+        if (this._timeouts.refreshTick)
+            GLib.source_remove(this._timeouts.refreshTick);
+
+        this._timeouts.refreshTick = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT,
+            Math.max(0, Math.round(delay)),
+            () => {
+                this._timeouts.refreshTick = 0;
+                this._refreshTick();
+                return GLib.SOURCE_REMOVE;
+            }
+        );
+    }
+
+    _refreshTick() {
+        if (!this._refreshActive || this._tmbDestroyed || this._refreshPending)
+            return;
+
+        // A hidden thumbnail has nothing to show, 'notify::mapped' restarts the cycle
+        if (!this.mapped)
+            return;
+
+        // The full size preview keeps the source window rendering anyway, try again later
+        if (this._winPreview) {
+            this._scheduleRefreshTick(opt.REFRESH_INTERVAL);
+            return;
+        }
+
+        this._ensureContentCache();
+        this._refreshPending = true;
+        this._refreshTickTime = GLib.get_monotonic_time() / 1000;
+        // A mapped clone makes the compositor send frame callbacks to the source window
+        this._clone.show();
+
+        if (this._forceNextRender) {
+            this._forceNextRender = false;
+            this._requestContentRender();
+            return;
+        }
+
+        // A window with static content never emits 'damaged', but a live clone
+        // of a static window costs nothing, so there is no need for a timeout here
+        this._damagedId = this._windowActor.connect('damaged', () => this._onSourceDamaged());
+    }
+
+    _onSourceDamaged() {
+        this._windowActor.disconnect(this._damagedId);
+        this._damagedId = 0;
+        this._requestContentRender();
+    }
+
+    _requestContentRender() {
+        // The content gets into the offscreen buffer during the next paint
+        this._contentCache.requestRender(() => this._finishRefresh());
+        this._content.queue_redraw();
+
+        // Safety net in case the content is not painted, e.g. when it is completely covered
+        this._timeouts.refreshTimeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT,
+            Math.max(REFRESH_TIMEOUT, 4 * opt.REFRESH_INTERVAL),
+            () => {
+                this._timeouts.refreshTimeout = 0;
+                this._finishRefresh();
+                return GLib.SOURCE_REMOVE;
+            }
+        );
+    }
+
+    _refreshContentNow() {
+        // Re-render the cached content regardless of the source window activity,
+        // e.g. after the thumbnail has been resized
+        if (!this._refreshActive || this._tmbDestroyed || !this.mapped)
+            return;
+
+        if (!this._refreshPending) {
+            this._forceNextRender = true;
+            this._scheduleRefreshTick(0);
+        } else if (this._damagedId) {
+            // Stop waiting for a new frame and render what is available
+            this._windowActor.disconnect(this._damagedId);
+            this._damagedId = 0;
+            this._requestContentRender();
+        }
+    }
+
+    _finishRefresh() {
+        this._cancelPendingRefresh();
+        if (this._tmbDestroyed || !this._refreshActive)
+            return;
+
+        // Unmapping the clone stops both the repaints and the rendering
+        // of the hidden source window until the next tick.
+        // Without a cached buffer the clone has to stay live, otherwise the thumbnail would be blank
+        if (this._contentCache?.get_texture())
+            this._clone.hide();
+
+        const elapsed = GLib.get_monotonic_time() / 1000 - this._refreshTickTime;
+        this._scheduleRefreshTick(opt.REFRESH_INTERVAL - elapsed);
+    }
+
+    _setSourceMipmaps(enable) {
+        // Mipmaps make the downscaled window content smooth, but their generation
+        // is a GPU cost paid with every new frame of the source window
+        if (this._sourceClosed)
+            return;
+
+        const texture = this._windowActor.get_texture();
+        if (texture)
+            texture.set_create_mipmaps(enable);
     }
 
     _setBelowPanel() {
@@ -1266,6 +1486,57 @@ const WindowThumbnail = GObject.registerClass({
                 this._destroyWindowPreview();
             },
         });
+    }
+});
+
+// Offscreen effect that re-renders its buffer only on request and otherwise paints the cached image.
+// Clutter.OffscreenEffect already caches the buffer while the actor is not dirty,
+// this subclass only extends the caching over redraws that are not caused by a new source frame
+const ContentCacheEffect = GObject.registerClass(
+class ContentCacheEffect extends Clutter.OffscreenEffect {
+    _init() {
+        super._init();
+        this._renderRequested = false;
+        this._onRendered = null;
+        this._renderedIdleId = 0;
+    }
+
+    requestRender(onRendered) {
+        this._renderRequested = true;
+        this._onRendered = onRendered;
+    }
+
+    cancelRender() {
+        this._renderRequested = false;
+        this._onRendered = null;
+        if (this._renderedIdleId) {
+            GLib.source_remove(this._renderedIdleId);
+            this._renderedIdleId = 0;
+        }
+    }
+
+    vfunc_paint(node, paintContext, flags) {
+        const hasBuffer = !!this.get_texture();
+        // Without a buffer the parent class renders regardless of the flags
+        const willRender = !hasBuffer || (this._renderRequested && (flags & Clutter.EffectPaintFlags.ACTOR_DIRTY));
+
+        if (!willRender)
+            flags &= ~Clutter.EffectPaintFlags.ACTOR_DIRTY;
+
+        super.vfunc_paint(node, paintContext, flags);
+
+        if (willRender && this._renderRequested) {
+            const onRendered = this._onRendered;
+            this.cancelRender();
+            // The scene graph must not be modified during the paint
+            if (onRendered) {
+                this._renderedIdleId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    this._renderedIdleId = 0;
+                    onRendered();
+                    return GLib.SOURCE_REMOVE;
+                });
+            }
+        }
     }
 });
 
