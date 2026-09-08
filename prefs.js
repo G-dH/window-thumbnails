@@ -194,6 +194,37 @@ export default class WTMB extends ExtensionPreferences {
             )
         );
 
+        optionList.push(
+            itemFactory.getRowWidget(
+                _('Thumbnail Refresh Rate Limit'),
+                _('A live thumbnail is repainted every time its source window draws a new frame, which keeps the compositor and the source window busy even if the window is minimized or hidden behind other windows. Limiting the refresh rate reduces the CPU and GPU load significantly. A limit at or above the frame rate of the displayed content, typically 24 - 30 fps for video, has no visible impact on the quality'),
+                itemFactory.newDropDown(),
+                'refreshRateLimit',
+                [
+                    [_('Unlimited'), 0],
+                    [_('60 fps'), 60],
+                    [_('30 fps'), 30],
+                    [_('20 fps'), 20],
+                    [_('15 fps'), 15],
+                    [_('10 fps'), 10],
+                    [_('5 fps'), 5],
+                ]
+            )
+        );
+
+        optionList.push(
+            itemFactory.getRowWidget(
+                _('Thumbnail Downscale Quality'),
+                _('"Smooth" uses mipmaps to scale the window content down without shimmering of fine details, but the mipmaps have to be regenerated every time the source window draws a new frame. "Fast" skips this step to save GPU time at the cost of a slightly rougher image. This setting also affects the appearance of the source window in the overview while its thumbnail exists'),
+                itemFactory.newDropDown(),
+                'downscaleQuality',
+                [
+                    [_('Smooth'), 0],
+                    [_('Fast'), 1],
+                ]
+            )
+        );
+
         return optionList;
     }
     // -----------------------------------------------------

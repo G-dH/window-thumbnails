@@ -44,6 +44,12 @@
     <key name='disable-meta-unredirection' type='b'>
       <default>false</default>
     </key>
+    <key name='refresh-rate-limit' type='i'>
+      <default>0</default>
+    </key>
+    <key name='downscale-quality' type='i'>
+      <default>0</default>
+    </key>
 
     <key name='create-tmb-shortcut' type='as'>
       <default><![CDATA[['<Super>t']]]></default>
@@ -142,6 +148,12 @@
     </key>
     <key name='disable-meta-unredirection' type='b'>
       <default>false</default>
+    </key>
+    <key name='refresh-rate-limit' type='i'>
+      <default>0</default>
+    </key>
+    <key name='downscale-quality' type='i'>
+      <default>0</default>
     </key>
 
     <key name='create-tmb-shortcut' type='as'>

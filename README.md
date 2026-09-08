@@ -13,6 +13,7 @@ WTMB is supported by the V-Shell, AATWS and CHC-E extensions which allows you to
 - Resizable by scrolling
 - Fully customizable mouse and keyboard control
 - An unlimited number or a single thumbnail
+- Optional thumbnail refresh rate limit and downscale quality settings to reduce the CPU and GPU load of live thumbnails
 - Windows can remember position nad size of their thumbnail after the thumbnail was removed so the thumbnail can be restored later
 - Multi-monitor support
 - Custom keyboard shortcuts
