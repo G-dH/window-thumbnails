@@ -52,6 +52,8 @@ export const Options = class {
             showCloseButton:           ['boolean',  'show-close-button'],
             hideFocused:               ['boolean',  'hide-focused'],
             disableMetaUnredirection:  ['boolean',  'disable-meta-unredirection'],
+            refreshRateLimit:          ['int',  'refresh-rate-limit'],
+            downscaleQuality:          ['int',  'downscale-quality'],
 
             createTmbShortcut:         ['strv', 'create-tmb-shortcut'],
             minimizeToTmbShortcut:     ['strv', 'minimize-to-tmb-shortcut'],
@@ -173,6 +175,14 @@ export const Options = class {
         this.SHOW_CLOSE_BUTTON = this.get('showCloseButton');
         this.HIDE_FOCUSED = this.get('hideFocused');
         this.DISABLE_UNREDIRECTION = this.get('disableMetaUnredirection');
+        // Maximum thumbnail refresh rate in fps, 0 means unlimited (live clone)
+        this.REFRESH_RATE_LIMIT = this.get('refreshRateLimit');
+        // Interval between thumbnail refreshes in ms, 0 means unlimited
+        this.REFRESH_INTERVAL = this.REFRESH_RATE_LIMIT > 0
+            ? Math.round(1000 / this.REFRESH_RATE_LIMIT)
+            : 0;
+        // Smooth downscale uses mipmaps, which are regenerated with every frame of the source window
+        this.SMOOTH_DOWNSCALE = this.get('downscaleQuality') === 0;
     }
 
     // Allows connection to the previous settings path with a typo so the settings can be migrated to the fixed path
